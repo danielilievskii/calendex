@@ -16,18 +16,23 @@
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="event in calendarStore.filteredEvents" :key="event.uid">
-        <TableCell >
+      <TableRow 
+        v-for="event in calendarStore.filteredEvents" 
+        :key="event.uid" 
+        :style="{ backgroundColor: event.calendarColor }"
+        class="tml-2 text-white text-lg font-bold"
+      >
+        <TableCell>
           {{ event.calendarName }}
         </TableCell>
         <TableCell class="font-medium">
           {{ event.summary }}
         </TableCell>
         <TableCell>{{ event.location ? event.location : "No location provided" }}</TableCell>
-        <TableCell >
+        <TableCell>
           {{ event.startDate }}
         </TableCell>
-        <TableCell >
+        <TableCell>
           {{ event.endDate }}
         </TableCell>
       </TableRow>

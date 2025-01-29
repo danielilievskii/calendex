@@ -7,7 +7,10 @@ export const useCalendarStore = defineStore('calendar', {
     }),
     actions: {
         addCalendar(calendar) {
-            this.calendars.push(calendar)
+            this.calendars.push({
+                ...calendar,
+                color: calendar.color || '#000000' // Default color if not provided
+            });
         },
         updateFilteredEvents(selectedCalendars) {
             if(selectedCalendars.length > 0) {
@@ -16,7 +19,8 @@ export const useCalendarStore = defineStore('calendar', {
                     .map(cal => cal.events
                         .map(event => ({
                         ...event,
-                        calendarName: cal.name
+                        calendarName: cal.name,
+                        calendarColor: cal.color
                     }))
                     )
                     .flat()
@@ -24,7 +28,5 @@ export const useCalendarStore = defineStore('calendar', {
                 this.filteredEvents = []
             }
         },
-
     },
-
 });
