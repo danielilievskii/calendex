@@ -51,8 +51,11 @@
           <span class="text-[15px]">All calendars</span>
         </div>
       </div>
-      <div class="text-left text-sm font-thin mt-2 w-4/5 mx-auto" v-if="dropdownOpen">
-        <label v-for="calendar in calendarStore.calendars" class="flex items-center cursor-pointer px-2 py-1 side-link rounded-md mt-1">
+      <div class="text-left text-sm font-thin mt-2 w-4/5 mx-auto text-white" v-if="dropdownOpen">
+        <label v-for="calendar in calendarStore.calendars" :key="calendar.id" 
+        class="flex items-center cursor-pointer px-2 py-1 side-link rounded-md mt-1" 
+        :style="{ backgroundColor: calendar.color, opacity: 0.5 }"
+        >
           <input type="checkbox" :value="calendar.name" v-model="selectedCalendars" class="form-checkbox rounded-md" />
           <span class="ml-2">{{calendar.name}}</span>
         </label>

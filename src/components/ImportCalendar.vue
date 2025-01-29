@@ -211,6 +211,7 @@ const handleSubmit = async () => {
 
   const calendar = {
     name: calendarName.value,
+    color: calendarColor.value,
     type: calendarType.value,
     url: calendarUrl.value,
     events: events.value,
@@ -223,6 +224,7 @@ const handleSubmit = async () => {
 
 const resetForm = () => {
   calendarName.value = '';
+  calendarColor.value = '';
   calendarType.value = '';
   calendarUrl.value = '';
   events.value = [];
