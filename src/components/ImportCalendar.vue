@@ -5,14 +5,14 @@
         <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
         <input v-model="calendarName" type="text" name="name" id="name" 
         class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
-        focus:ring-indigo-500 sm:text-sm p-0.5" 
+        focus:ring-indigo-500 sm:text-sm p-1.5" 
         placeholder="Enter calendar name" />
       </div>
 
 
-      <div class="w-full sm:w-1/2">
+      <div class="w-full sm:w-1/2 ">
         <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
-        <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2">
+        <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
           <button
         @click="calendarColor = 'red'"
         class="w-6 h-6 bg-red-500 rounded-full cursor-pointer"
@@ -124,21 +124,21 @@
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
         :class="importMethod === 'file' ? 'bg-indigo-600 text-white' : 'bg-gray-200'" 
-        @click="importMethod = 'file'">Upload File</button>
+        @click="importMethod = 'file'">Use downloaded file</button>
 
       </div>
     </div>
 
     <div v-if="importMethod === 'url'" class="mb-6">
-      <label for="icsUrl" class="block text-sm font-medium text-gray-700">ICS URL</label>
+      <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
       <input v-model="calendarUrl" type="text" id="icsUrl" 
       class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
-        focus:ring-indigo-500 sm:text-sm p-0.5"
+        focus:ring-indigo-500 sm:text-sm p-2"
        placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
     </div>
 
     <div v-if="importMethod === 'file'" class="mb-6">
-      <label for="iscFile" class="block text-sm font-medium text-gray-700">ICS File</label>
+      <label for="iscFile" class="block text-sm font-medium text-gray-700">Upload downloaded ICS File</label>
       <input ref="calendarFile" type="file" id="iscFile" 
       class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
       file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 
