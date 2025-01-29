@@ -36,32 +36,50 @@
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700">Calendar Type</label>
       <RadioGroup v-model="calendarType" default-value="google" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
+        <div @click="calendarType = 'google'" class="relative">
           <RadioGroupItem id="google" value="google" class="peer sr-only" />
           <label for="google" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-indigo-500">
+          peer-checked:border-blue-500">
             <i class="bi bi-google"></i>
             Google
           </label>
+          <div
+            :class="[
+              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
+              calendarType === 'google' ? 'border-[3px]' : 'border-0'
+            ]"
+          ></div>
         </div>
-        <div>
+        <div @click="calendarType = 'outlook'" class="relative">
           <RadioGroupItem id="outlook" value="outlook" class="peer sr-only" />
           <label for="outlook" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-indigo-500">
+          peer-checked:border-blue-500">
             <i class="bi bi-microsoft"></i>
             Outlook
           </label>
+          <div
+            :class="[
+              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
+              calendarType === 'outlook' ? 'border-[3px]' : 'border-0'
+            ]"
+          ></div>
         </div>
-        <div>
+        <div @click="calendarType = 'apple'" class="relative">
           <RadioGroupItem id="apple" value="apple" class="peer sr-only" />
           <label for="apple" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-indigo-500">
+          peer-checked:border-blue-500">
             <i class="bi bi-apple"></i>
             Apple
           </label>
+          <div
+            :class="[
+              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
+              calendarType === 'apple' ? 'border-[3px]' : 'border-0'
+            ]"
+          ></div>
         </div>
       </RadioGroup>
     </div>
