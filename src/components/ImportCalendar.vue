@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-lg shadow-md">
+  <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-lg shadow-md w-full sm:w-auto">
     
     <div class="mb-6 flex flex-col sm:flex-row gap-4">
       <div class="w-full sm:w-1/2">
@@ -12,21 +12,51 @@
 
       <div class="w-full sm:w-1/2">
         <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
-        <div class="mt-1 flex gap-2">
+        <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2">
           <button
-            @click="calendarColor = 'red'"
-            class="w-6 h-6 bg-red-500 rounded-full cursor-pointer"
-            :class="calendarColor === 'red' ? 'ring-2 ring-offset-2 ring-red-500' : ''"
+        @click="calendarColor = 'red'"
+        class="w-6 h-6 bg-red-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'red' ? 'ring-2 ring-offset-2 ring-red-500' : ''"
           ></button>
           <button
-            @click="calendarColor = 'green'"
-            class="w-6 h-6 bg-green-500 rounded-full cursor-pointer"
-            :class="calendarColor === 'green' ? 'ring-2 ring-offset-2 ring-green-500' : ''"
+        @click="calendarColor = 'orange'"
+        class="w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'orange' ? 'ring-2 ring-offset-2 ring-orange-500' : ''"
           ></button>
           <button
-            @click="calendarColor = 'blue'"
-            class="w-6 h-6 bg-blue-500 rounded-full cursor-pointer"
-            :class="calendarColor === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''"
+        @click="calendarColor = 'yellow'"
+        class="w-6 h-6 bg-yellow-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'yellow' ? 'ring-2 ring-offset-2 ring-yellow-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'green'"
+        class="w-6 h-6 bg-green-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'green' ? 'ring-2 ring-offset-2 ring-green-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'teal'"
+        class="w-6 h-6 bg-teal-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'teal' ? 'ring-2 ring-offset-2 ring-teal-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'blue'"
+        class="w-6 h-6 bg-blue-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'purple'"
+        class="w-6 h-6 bg-purple-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'purple' ? 'ring-2 ring-offset-2 ring-purple-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'pink'"
+        class="w-6 h-6 bg-pink-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'pink' ? 'ring-2 ring-offset-2 ring-pink-500' : ''"
+          ></button>
+          <button
+        @click="calendarColor = 'gray'"
+        class="w-6 h-6 bg-gray-500 rounded-full cursor-pointer"
+        :class="calendarColor === 'gray' ? 'ring-2 ring-offset-2 ring-gray-500' : ''"
           ></button>
         </div>
       </div>
