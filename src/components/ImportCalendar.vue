@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-lg shadow-md w-full sm:w-auto">
-    
     <div class="mb-6 flex flex-col sm:flex-row gap-4">
       <div class="w-full sm:w-1/2">
         <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
@@ -9,6 +8,7 @@
         focus:ring-indigo-500 sm:text-sm p-0.5" 
         placeholder="Enter calendar name" />
       </div>
+
 
       <div class="w-full sm:w-1/2">
         <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
@@ -161,6 +161,8 @@ import axios from 'axios'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
+import { Toaster, toast } from 'vue-sonner'
+
 
 const calendarStore = useCalendarStore();
 
