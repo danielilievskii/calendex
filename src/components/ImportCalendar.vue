@@ -167,6 +167,7 @@ const calendarStore = useCalendarStore();
 const calendarName = ref('')
 const calendarType = ref('')
 const importMethod = ref<'url' | 'file'>('url')
+const calendarColor = ref('')
 const calendarUrl = ref('')
 const calendarFile = ref<HTMLInputElement | null>(null)
 
