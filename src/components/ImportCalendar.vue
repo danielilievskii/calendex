@@ -5,8 +5,8 @@
       <div class="w-full sm:w-1/2">
         <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
         <input v-model="calendarName" type="text" name="name" id="name" 
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 
-        focus:ring-indigo-500 sm:text-sm" 
+        class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
+        focus:ring-indigo-500 sm:text-sm p-0.5" 
         placeholder="Enter calendar name" />
       </div>
 
@@ -132,8 +132,8 @@
     <div v-if="importMethod === 'url'" class="mb-6">
       <label for="icsUrl" class="block text-sm font-medium text-gray-700">ICS URL</label>
       <input v-model="calendarUrl" type="text" id="icsUrl" 
-      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm 
-      focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
+        focus:ring-indigo-500 sm:text-sm p-0.5"
        placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
     </div>
 
