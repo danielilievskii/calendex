@@ -65,6 +65,7 @@
       class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
         focus:ring-indigo-500 sm:text-sm p-2"
        placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
+      <router-link to="/faq" class="text-blue-500 hover:underline text-sm">Need help finding your URL?</router-link>
     </div>
 
     <div v-if="importMethod === 'file'" class="mb-6">

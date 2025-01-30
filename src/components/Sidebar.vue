@@ -36,6 +36,11 @@
           <i class="fa-solid fa-list"></i>
           <span class="text-[18px] ml-4">Events</span>
         </RouterLink>
+        <RouterLink to="/faq"
+            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
+            <i class="bi bi-info-circle"></i>
+          <span class="text-[18px] ml-4">Help & FAQ</span>
+        </RouterLink>
       </nav>
 
       <hr class="my-4" />
