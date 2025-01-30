@@ -57,10 +57,11 @@
         </div>
         <label v-else v-for="calendar in calendarStore.calendars" :key="calendar.id" 
         class="flex items-center cursor-pointer px-2 py-1 side-link rounded-md mt-1" 
-        :style="{ backgroundColor: calendar.color}"
         >
-          <input type="checkbox" :value="calendar.name" v-model="selectedCalendars" class="form-checkbox rounded-md" />
-            <span class="ml-2 text-black text-lg font-bold">{{calendar.name}}</span>
+            <input type="checkbox" :value="calendar.name" v-model="selectedCalendars" 
+            class="form-checkbox h-5 w-5 transition duration-150 ease-in-out rounded-md "/>
+          <div class="w-2 h-5 rounded-full ml-2" :style="{ backgroundColor: calendar.color }"></div>
+          <span class="ml-2 text-black text-lg font-bold">{{calendar.name}}</span>
         </label>
       </div>
 

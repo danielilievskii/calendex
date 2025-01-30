@@ -14,53 +14,14 @@
         <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
         <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
           <button
-        @click="calendarColor = 'red'"
-        class="w-6 h-6 bg-red-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'red' ? 'ring-2 ring-offset-2 ring-red-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'orange'"
-        class="w-6 h-6 bg-orange-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'orange' ? 'ring-2 ring-offset-2 ring-orange-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'yellow'"
-        class="w-6 h-6 bg-yellow-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'yellow' ? 'ring-2 ring-offset-2 ring-yellow-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'green'"
-        class="w-6 h-6 bg-green-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'green' ? 'ring-2 ring-offset-2 ring-green-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'teal'"
-        class="w-6 h-6 bg-teal-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'teal' ? 'ring-2 ring-offset-2 ring-teal-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'blue'"
-        class="w-6 h-6 bg-blue-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'blue' ? 'ring-2 ring-offset-2 ring-blue-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'purple'"
-        class="w-6 h-6 bg-purple-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'purple' ? 'ring-2 ring-offset-2 ring-purple-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'pink'"
-        class="w-6 h-6 bg-pink-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'pink' ? 'ring-2 ring-offset-2 ring-pink-500' : ''"
-          ></button>
-          <button
-        @click="calendarColor = 'gray'"
-        class="w-6 h-6 bg-gray-500 rounded-full cursor-pointer"
-        :class="calendarColor === 'gray' ? 'ring-2 ring-offset-2 ring-gray-500' : ''"
+            v-for="(colorClass, colorName) in colorMap"
+            :key="colorName"
+            @click="calendarColor = colorName"
+            :class="['w-6 h-6 rounded-full cursor-pointer', 
+            colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2' : '']"
           ></button>
         </div>
       </div>
-
     </div>
 
     <div class="mb-6">
@@ -172,6 +133,18 @@ const importMethod = ref<'url' | 'file'>('url')
 const calendarColor = ref('')
 const calendarUrl = ref('')
 const calendarFile = ref<HTMLInputElement | null>(null)
+
+const colorMap = {
+  red: 'bg-red-500',
+  orange: 'bg-orange-500',
+  yellow: 'bg-yellow-500',
+  green: 'bg-green-500',
+  teal: 'bg-teal-500',
+  blue: 'bg-blue-500',
+  purple: 'bg-purple-500',
+  pink: 'bg-pink-500',
+  gray: 'bg-gray-500'
+}
 
 let events = ref([])
 
