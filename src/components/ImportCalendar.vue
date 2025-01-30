@@ -9,7 +9,6 @@
         placeholder="Enter calendar name" />
       </div>
 
-
       <div class="w-full sm:w-1/2 ">
         <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
         <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
@@ -27,48 +26,18 @@
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700">Calendar Type</label>
       <RadioGroup v-model="calendarType" default-value="google" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div @click="calendarType = 'google'" class="relative">
-          <RadioGroupItem id="google" value="google" class="peer sr-only" />
-          <label for="google" class="flex flex-col items-center justify-between 
+        <div v-for="option in radioOptions" :key="option.value" @click="calendarType = option.value" class="relative">
+          <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
+          <label :for="option.value" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
           peer-checked:border-blue-500">
-            <i class="bi bi-google"></i>
-            Google
+            <i :class="option.icon"></i>
+            {{ option.label }}
           </label>
           <div
             :class="[
               'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
-              calendarType === 'google' ? 'border-[3px]' : 'border-0'
-            ]"
-          ></div>
-        </div>
-        <div @click="calendarType = 'outlook'" class="relative">
-          <RadioGroupItem id="outlook" value="outlook" class="peer sr-only" />
-          <label for="outlook" class="flex flex-col items-center justify-between 
-          rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-blue-500">
-            <i class="bi bi-microsoft"></i>
-            Outlook
-          </label>
-          <div
-            :class="[
-              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
-              calendarType === 'outlook' ? 'border-[3px]' : 'border-0'
-            ]"
-          ></div>
-        </div>
-        <div @click="calendarType = 'apple'" class="relative">
-          <RadioGroupItem id="apple" value="apple" class="peer sr-only" />
-          <label for="apple" class="flex flex-col items-center justify-between 
-          rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-blue-500">
-            <i class="bi bi-apple"></i>
-            Apple
-          </label>
-          <div
-            :class="[
-              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
-              calendarType === 'apple' ? 'border-[3px]' : 'border-0'
+              calendarType === option.value ? 'border-[3px]' : 'border-0'
             ]"
           ></div>
         </div>
@@ -122,7 +91,6 @@ import axios from 'axios'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
-import { Toaster, toast } from 'vue-sonner'
 
 
 const calendarStore = useCalendarStore();
@@ -145,6 +113,12 @@ const colorMap = {
   pink: 'bg-pink-500',
   gray: 'bg-gray-500'
 }
+
+const radioOptions = [
+  { value: 'google', label: 'Google', icon: 'bi bi-google' },
+  { value: 'outlook', label: 'Outlook', icon: 'bi bi-microsoft' },
+  { value: 'apple', label: 'Apple', icon: 'bi bi-apple' }
+]
 
 let events = ref([])
 

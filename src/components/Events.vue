@@ -11,29 +11,14 @@
             <TableHead class="w-12">
               <Checkbox @change="toggleAll" :checked="allSelected" />
             </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('calendarName')">
-              Calendar Name
-              <span v-if="sortKey === 'calendarName'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
-            </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('summary')">
-              Summary
-              <span v-if="sortKey === 'summary'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
-            </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('location')">
-              Location
-              <span v-if="sortKey === 'location'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
-            </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('startDate')">
-              Start Date
-              <span v-if="sortKey === 'startDate'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
-            </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('endDate')">
-              End Date
-              <span v-if="sortKey === 'endDate'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
-            </TableHead>
-            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('duration')">
-              Duration
-              <span v-if="sortKey === 'duration'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            <TableHead
+              v-for="header in headers"
+              :key="header.key"
+              class="font-bold text-lg cursor-pointer"
+              @click="sortBy(header.key)"
+            >
+              {{ header.label }}
+              <span v-if="sortKey === header.key">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
             </TableHead>
             <TableHead class="w-12"></TableHead>
           </TableRow>
@@ -175,6 +160,15 @@ const currentPage = ref(1)
 const rowsPerPage = ref('10')
 const sortKey = ref<string | null>(null)
 const sortOrder = ref<'asc' | 'desc'>('asc')
+
+const headers = [
+  { key: 'calendarName', label: 'Calendar Name' },
+  { key: 'summary', label: 'Summary' },
+  { key: 'location', label: 'Location' },
+  { key: 'startDate', label: 'Start Date' },
+  { key: 'endDate', label: 'End Date' },
+  { key: 'duration', label: 'Duration' }
+]
 
 const allSelected = computed(() => 
   calendarStore.filteredEvents.length > 0 && 
