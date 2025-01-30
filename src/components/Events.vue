@@ -3,16 +3,6 @@
     <div class="rounded-md border border-gray-800">
       <div class="flex items-center justify-between p-4">
         <h2 class="text-lg font-semibold">Events</h2>
-        <!-- <div class="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <FilterIcon class="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-          <Button variant="outline" size="sm">
-            <SettingsIcon class="mr-2 h-4 w-4" />
-            View
-          </Button>
-        </div> -->
       </div>
 
       <Table>
@@ -21,18 +11,36 @@
             <TableHead class="w-12">
               <Checkbox @change="toggleAll" :checked="allSelected" />
             </TableHead>
-            <TableHead class="font-bold text-lg">Calendar Name</TableHead>
-            <TableHead class="font-bold text-lg">Summary</TableHead>
-            <TableHead class="font-bold text-lg">Location</TableHead>
-            <TableHead class="font-bold text-lg">Start Date</TableHead>
-            <TableHead class="font-bold text-lg">End Date</TableHead>
-            <TableHead class="font-bold text-lg">Duration</TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('calendarName')">
+              Calendar Name
+              <span v-if="sortKey === 'calendarName'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('summary')">
+              Summary
+              <span v-if="sortKey === 'summary'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('location')">
+              Location
+              <span v-if="sortKey === 'location'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('startDate')">
+              Start Date
+              <span v-if="sortKey === 'startDate'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('endDate')">
+              End Date
+              <span v-if="sortKey === 'endDate'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
+            <TableHead class="font-bold text-lg cursor-pointer" @click="sortBy('duration')">
+              Duration
+              <span v-if="sortKey === 'duration'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+            </TableHead>
             <TableHead class="w-12"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow 
-            v-for="event in paginatedEvents" 
+            v-for="event in sortedEvents" 
             :key="event.uid"
             class="hover:bg-gray-800/50"
           >
@@ -165,6 +173,8 @@ const calendarStore = useCalendarStore()
 const selectedEvents = ref<string[]>([])
 const currentPage = ref(1)
 const rowsPerPage = ref('10')
+const sortKey = ref<string | null>(null)
+const sortOrder = ref<'asc' | 'desc'>('asc')
 
 const allSelected = computed(() => 
   calendarStore.filteredEvents.length > 0 && 
@@ -175,10 +185,20 @@ const totalPages = computed(() =>
   Math.ceil(calendarStore.filteredEvents.length / Number(rowsPerPage.value))
 )
 
-const paginatedEvents = computed(() => {
+const sortedEvents = computed(() => {
+  const events = [...calendarStore.filteredEvents]
+  if (sortKey.value) {
+    events.sort((a, b) => {
+      const aValue = a[sortKey.value as keyof typeof a]
+      const bValue = b[sortKey.value as keyof typeof b]
+      if (aValue < bValue) return sortOrder.value === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortOrder.value === 'asc' ? 1 : -1
+      return 0
+    })
+  }
   const start = (currentPage.value - 1) * Number(rowsPerPage.value)
   const end = start + Number(rowsPerPage.value)
-  return calendarStore.filteredEvents.slice(start, end)
+  return events.slice(start, end)
 })
 
 const toggleAll = (checked: boolean) => {
@@ -200,6 +220,14 @@ const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString()
 }
 
+const sortBy = (key: string) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortOrder.value = 'asc'
+  }
+}
 </script>
 
 <style scoped>
