@@ -26,13 +26,13 @@
 
       <nav>
         <RouterLink to="/"
-            class="side-link p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
+            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
           <i class="bi bi-calendar2-day"></i>
           <span class="text-[18px] ml-4"> Calendar </span>
         </RouterLink>
 
         <RouterLink to="/events"
-            class="side-link p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
+            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
           <i class="fa-solid fa-list"></i>
           <span class="text-[18px] ml-4">Events</span>
         </RouterLink>
@@ -41,7 +41,7 @@
       <hr class="my-4" />
 
       <!-- Dropdown Section -->
-      <div class="side-link py-1 px-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer"
+      <div class="side-hover py-1 px-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer"
           @click="toggleDropdown">
         <div class="flex items-center gap-2">
 
@@ -56,24 +56,42 @@
           Empty
         </div>
         <label v-else v-for="calendar in calendarStore.calendars" :key="calendar.id" 
-        class="flex items-center cursor-pointer px-2 py-1 rounded-md mt-1"
+        class="flex items-center flex-row justify-between w-full side-hover cursor-pointer px-2 rounded-md mt-1"
         >
-          <div class="relative h-5 w-5">
-            <input type="checkbox" :value="calendar.name" v-model="selectedCalendars"
-                   class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
-                   :style="{
+          <div class="flex items-center">
+            <div class="relative h-5 w-5">
+              <input type="checkbox" :value="calendar.name" v-model="selectedCalendars"
+                     class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
+                     :style="{
                    backgroundColor: selectedCalendars.includes(calendar.name) ? calendar.color : 'white',
                    borderColor: calendar.color
                }"/>
-            <svg v-if="selectedCalendars.includes(calendar.name)"
-                 class="absolute inset-0 m-auto h-4 w-4 text-white"
-                 fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-            </svg>
+              <svg v-if="selectedCalendars.includes(calendar.name)"
+                   class="absolute inset-0 m-auto h-4 w-4 text-white"
+                   fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span :class="['ml-2 font-[600] text-[15px]']"
+                  :style="{color: selectedCalendars.includes(calendar.name) ? '#000000' : '#c4c4c7'}"
+            >{{calendar.name}}
+            </span>
           </div>
-          <span :class="['ml-2 font-[600] text-[15px]']"
-                :style="{color: selectedCalendars.includes(calendar.name) ? '#000000' : '#c4c4c7'}"
-          >{{calendar.name}}</span>
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger class="">
+                <Button variant="ghost" size="icon" class="side-hover rounder-50">
+                  <MoreVerticalIcon class="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem class="text-red-500">Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
         </label>
       </div>
 
@@ -88,12 +106,23 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch } from "vue";
+<script setup lang="ts">
 import Calendar from "@/components/ui/calendar/Calendar.vue";
-import { getLocalTimeZone, today } from '@internationalized/date'
+import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue'
+import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue'
+import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
+import DropdownMenuSeparator from '@/components/ui/dropdown-menu/DropdownMenuSeparator.vue'
+import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
+import Button from '@/components/ui/button/Button.vue'
+
 import { useSidebarStore } from '@/stores/sidebar';
 import { useCalendarStore } from '@/stores/calendar';
+
+import {MoreVerticalIcon} from 'lucide-vue-next'
+
+import { ref, watch } from "vue";
+import { getLocalTimeZone, today } from '@internationalized/date'
+
 
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
@@ -118,8 +147,12 @@ function toggleDropdown() {
   background: #F6F5F8;
 }
 
-.side-link:hover, h1:hover {
-  background: #E2E1E6;
+.side-hover:hover, h1:hover {
+  background: #E2E1E6 !important;
+}
+
+.rounder-50 {
+  border-radius: 50% !important;
 }
 
 nav a.router-link-exact-active {
