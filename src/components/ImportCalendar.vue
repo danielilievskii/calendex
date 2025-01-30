@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-lg shadow-md w-full sm:w-auto">
+  <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-md border border-gray-200 shadow-lg w-full sm:w-auto">
     <div class="mb-6 flex flex-col sm:flex-row gap-4">
       <div class="w-full sm:w-1/2">
         <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
@@ -46,14 +46,14 @@
 
     <div class="mb-6">
       <span class="block text-sm font-medium text-gray-700">Import Method</span>
-      <div class="mt-2 flex flex-col sm:flex-row gap-4">
+      <div class="mt-2 flex flex-col sm:flex-row gap-3">
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'url' ? 'bg-indigo-600 text-white' : 'bg-gray-200'" 
+        :class="importMethod === 'url' ? 'blue-btn' : 'gray-btn'"
         @click="importMethod = 'url'">Use URL</button>
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'file' ? 'bg-indigo-600 text-white' : 'bg-gray-200'" 
+        :class="importMethod === 'file' ? 'blue-btn' : 'gray-btn'"
         @click="importMethod = 'file'">Use downloaded file</button>
 
       </div>
@@ -62,7 +62,7 @@
     <div v-if="importMethod === 'url'" class="mb-6">
       <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
       <input v-model="calendarUrl" type="text" id="icsUrl" 
-      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
+      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
         focus:ring-indigo-500 sm:text-sm p-2"
        placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
     </div>
@@ -70,16 +70,16 @@
     <div v-if="importMethod === 'file'" class="mb-6">
       <label for="iscFile" class="block text-sm font-medium text-gray-700">Upload downloaded ICS File</label>
       <input ref="calendarFile" type="file" id="iscFile" 
-      class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
-      file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 
-      file:text-indigo-600 hover:file:bg-indigo-100" />
+      class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50
+      file:text-[#587acc] hover:file:bg-indigo-100 cursor-pointer" />
     </div>
 
-    <div class="flex items-center justify-end gap-4">
-      <button type="button" class="text-sm font-medium text-gray-700" @click="resetdiv">Cancel</button>
+    <div class="flex items-center justify-end gap-3">
+      <button type="button" class="px-4 py-2 rounded-md text-sm font-medium gray-btn" @click="resetForm">Cancel</button>
       
-      <button @click="handleSubmit" type="submit" class="px-4 py-2 rounded-md bg-indigo-600 
-      text-sm font-medium text-white shadow-sm hover:bg-indigo-500">Save</button>
+      <button @click="handleSubmit" type="submit" class="px-4 py-2 rounded-md
+      text-sm font-medium shadow-sm blue-btn">Save</button>
     </div>
   </div>
 </template>
@@ -235,3 +235,28 @@ const handleURLDownload = async () => {
   }
 };
 </script>
+
+<style scoped>
+
+.blue-btn {
+  color: white;
+  background-color: #587acc;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.blue-btn:hover {
+  background-color: #6c8ccf;
+}
+
+
+.gray-btn {
+  color: #555;
+  background-color: #F0F0F0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.gray-btn:hover {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+</style>

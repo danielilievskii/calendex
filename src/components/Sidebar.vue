@@ -97,8 +97,8 @@
 
       <div class="flex justify-center mt-5">
         <RouterLink to="/calendar-import" class="inline-flex">
-          <button class="bg-blue-500 hover:bg-blue-400 text-white py-2 px-4 duration-200 rounded-lg">
-            Import calendar
+          <button class="bg-[#587acc] hover:bg-[#6c8ccf] text-lg font-medium text-white py-2 px-4 duration-200 rounded-lg">
+            + Import Calendar
           </button>
         </RouterLink>
       </div>
