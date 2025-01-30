@@ -48,7 +48,7 @@
           <span class="text-sm transition-transform" :class="{ '-rotate-90': !dropdownOpen }">
             <i class="bi bi-caret-down-fill"></i>
           </span>
-          <span class="text-[15px]">All calendars</span>
+          <span class="text-[15px] tracking-widest font-semibold">ALL CALENDARS</span>
         </div>
       </div>
       <div class="text-left text-sm font-thin mt-2 w-4/5 mx-auto" v-if="dropdownOpen">
@@ -56,12 +56,24 @@
           Empty
         </div>
         <label v-else v-for="calendar in calendarStore.calendars" :key="calendar.id" 
-        class="flex items-center cursor-pointer px-2 py-1 side-link rounded-md mt-1" 
+        class="flex items-center cursor-pointer px-2 py-1 rounded-md mt-1"
         >
-            <input type="checkbox" :value="calendar.name" v-model="selectedCalendars" 
-            class="form-checkbox h-5 w-5 transition duration-150 ease-in-out rounded-md "/>
-          <div class="w-2 h-5 rounded-full ml-2" :style="{ backgroundColor: calendar.color }"></div>
-          <span class="ml-2 text-black text-lg font-bold">{{calendar.name}}</span>
+          <div class="relative h-5 w-5">
+            <input type="checkbox" :value="calendar.name" v-model="selectedCalendars"
+                   class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
+                   :style="{
+                   backgroundColor: selectedCalendars.includes(calendar.name) ? calendar.color : 'white',
+                   borderColor: calendar.color
+               }"/>
+            <svg v-if="selectedCalendars.includes(calendar.name)"
+                 class="absolute inset-0 m-auto h-4 w-4 text-white"
+                 fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <span :class="['ml-2 font-[600] text-[15px]']"
+                :style="{color: selectedCalendars.includes(calendar.name) ? '#000000' : '#c4c4c7'}"
+          >{{calendar.name}}</span>
         </label>
       </div>
 
