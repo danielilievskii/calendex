@@ -1,84 +1,64 @@
 <template>
-  <div class="min-h-screen p-4 text-black">
-    <div class="rounded-md border border-gray-800">
+  <div class="min-h-screen px-4 text-black">
+    <div class="rounded-md border border-gray-200 shadow-lg">
       <div class="flex items-center justify-between p-4">
         <h2 class="text-lg font-semibold">Events</h2>
       </div>
 
-      <Table>
+      <Table class="table-fixed w-full">
         <TableHeader>
-          <TableRow>
-            <TableHead class="w-12">
-              <Checkbox @change="toggleAll" :checked="allSelected" />
-            </TableHead>
+          <TableRow class="bg-gray-200/50 hover:bg-gray-200/50">
             <TableHead
-              v-for="header in headers"
-              :key="header.key"
-              class="font-bold text-lg cursor-pointer"
-              @click="sortBy(header.key)"
+                v-for="header in headers"
+                :key="header.key"
+                class="font-bold text-lg cursor-pointer px-4 py-2 text-left"
+                :class="{
+          'w-1/5': header.key === 'calendarName',
+          'w-1/4': header.key === 'summary',
+          'w-1/6': header.key === 'location',
+          'w-1/6': header.key === 'date',
+          'w-1/6': header.key === 'duration'
+        }"
+                @click="sortBy(header.key)"
             >
               {{ header.label }}
               <span v-if="sortKey === header.key">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
             </TableHead>
-            <TableHead class="w-12"></TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          <TableRow 
-            v-for="event in sortedEvents" 
-            :key="event.uid"
-            class="hover:bg-gray-800/50"
+          <TableRow
+              v-for="event in sortedEvents"
+              :key="event.uid"
+              class="hover:bg-gray-200/50"
           >
-            <TableCell>
-              <Checkbox 
-                :checked="selectedEvents.includes(event.uid)"
-                @change="toggleEvent(event.uid)"
-              />
-            </TableCell>
-            <TableCell>
+            <TableCell class="w-1/5 px-4 py-2">
               <div class="flex items-center gap-2">
-                <div 
-                  class="w-3 h-3 rounded-full" 
-                  :style="{ backgroundColor: event.calendarColor }"
+                <div
+                    class="w-3 h-3 rounded-full"
+                    :style="{ backgroundColor: event.calendarColor }"
                 ></div>
                 {{ event.calendarName }}
               </div>
             </TableCell>
-            <TableCell :class="{'text-black': true, 'font-medium': true}">
+            <TableCell class="w-1/4 px-4 py-2 font-medium text-black">
               {{ event.summary }}
             </TableCell>
-            <TableCell>{{ event.location || "No location" }}</TableCell>
-            <TableCell>{{ formatDate(event.startDate) }}</TableCell>
-            <TableCell>{{ formatDate(event.endDate) }}</TableCell>
-            <TableCell>
-              <Badge >
-                {{ event.duration || 'Unknown' }}
-              </Badge>
-            </TableCell>
-            
-            <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Button variant="ghost" size="icon">
-                    <MoreVerticalIcon class="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem class="text-red-500">Delete</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <TableCell class="w-1/6 px-4 py-2">{{ event.location || "No location" }}</TableCell>
+            <TableCell class="w-1/6 px-4 py-2">{{ formatDate(event.startDate) }}</TableCell>
+            <TableCell class="w-1/6 px-4 py-2">
+              <Badge>{{ formatDuration(event.duration) || 'Unknown' }}</Badge>
             </TableCell>
           </TableRow>
+
           <TableRow v-if="calendarStore.filteredEvents.length === 0">
-            <TableCell colspan="9" class="text-center">No events found</TableCell>
+            <TableCell colspan="5" class="text-center">No events found</TableCell>
           </TableRow>
         </TableBody>
       </Table>
 
-      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-800">
+      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-300">
         <div class="text-sm text-gray-400">
           {{ selectedEvents.length }} of {{ calendarStore.filteredEvents.length }} row(s) selected.
         </div>
@@ -132,11 +112,6 @@ import TableCell from '@/components/ui/table/TableCell.vue'
 import TableHead from '@/components/ui/table/TableHead.vue'
 import TableHeader from '@/components/ui/table/TableHeader.vue'
 import TableRow from '@/components/ui/table/TableRow.vue'
-import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue'
-import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue'
-import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
-import DropdownMenuSeparator from '@/components/ui/dropdown-menu/DropdownMenuSeparator.vue'
-import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
 import Select from '@/components/ui/select/Select.vue'
 import SelectContent from '@/components/ui/select/SelectContent.vue'
 import SelectItem from '@/components/ui/select/SelectItem.vue'
@@ -165,15 +140,9 @@ const headers = [
   { key: 'calendarName', label: 'Calendar Name' },
   { key: 'summary', label: 'Summary' },
   { key: 'location', label: 'Location' },
-  { key: 'startDate', label: 'Start Date' },
-  { key: 'endDate', label: 'End Date' },
+  { key: 'startDate', label: 'Scheduled Time' },
   { key: 'duration', label: 'Duration' }
 ]
-
-const allSelected = computed(() => 
-  calendarStore.filteredEvents.length > 0 && 
-  selectedEvents.value.length === calendarStore.filteredEvents.length
-)
 
 const totalPages = computed(() => 
   Math.ceil(calendarStore.filteredEvents.length / Number(rowsPerPage.value))
@@ -195,23 +164,36 @@ const sortedEvents = computed(() => {
   return events.slice(start, end)
 })
 
-const toggleAll = (checked: boolean) => {
-  selectedEvents.value = checked 
-    ? calendarStore.filteredEvents.map(event => event.uid)
-    : []
-}
-
-const toggleEvent = (uid: string) => {
-  const index = selectedEvents.value.indexOf(uid)
-  if (index === -1) {
-    selectedEvents.value.push(uid)
-  } else {
-    selectedEvents.value.splice(index, 1)
-  }
-}
-
 const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString()
+  return new Date(date).toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+const formatDuration = (duration: any) => {
+    if(typeof duration === 'object' && duration !== null) {
+      const weeks = duration.weeks || 0;
+      const days = duration.days || 0;
+      const hours = duration.hours || 0;
+      const minutes = duration.minutes || 0;
+      const seconds = duration.seconds || 0;
+
+      const parts = [];
+      if (weeks > 0) parts.push(`${weeks} week${weeks > 1 ? 's' : ''}`);
+      if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+      if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+      if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+      if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+
+      return parts.length > 0 ? parts.join(', ') : 'None';
+
+    }
 }
 
 const sortBy = (key: string) => {
