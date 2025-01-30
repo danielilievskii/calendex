@@ -90,9 +90,9 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem @click="editCalendar(calendar.id)">Edit</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem class="text-red-500">Delete</DropdownMenuItem>
+                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.id)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -144,6 +144,17 @@ const dropdownOpen = ref(true);
 function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;
 }
+
+const deleteCalendar = (id: string) => {
+  calendarStore.deleteCalendar(id);
+};
+
+const editCalendar = (id: string) => {
+  const newName = prompt("Enter new calendar name:");
+  if (newName) {
+    calendarStore.editCalendarName(id, newName);
+  }
+};
 
 </script>
 

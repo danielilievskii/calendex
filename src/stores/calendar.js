@@ -28,5 +28,14 @@ export const useCalendarStore = defineStore('calendar', {
                 this.filteredEvents = []
             }
         },
+        deleteCalendar(id) {
+            this.calendars = this.calendars.filter(calendar => calendar.id !== id);
+        },
+        editCalendarName(id, newName) {
+            const calendar = this.calendars.find(calendar => calendar.id === id);
+            if (calendar) {
+                calendar.name = newName;
+            }
+        }
     },
 });
