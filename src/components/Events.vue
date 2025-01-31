@@ -37,7 +37,7 @@
               <div class="flex items-center gap-2">
                 <div
                     class="w-3 h-3 rounded-full"
-                    :style="{ backgroundColor: event.calendarColor }"
+                    :class="[colorStore.getBackgroundColor(event.calendarColor)]"
                 ></div>
                 {{ event.calendarName }}
               </div>
@@ -128,8 +128,11 @@ import {
   SettingsIcon
 } from 'lucide-vue-next'
 import { useCalendarStore } from '@/stores/calendar'
+import { useColorStore } from '@/stores/colors';
 
 const calendarStore = useCalendarStore()
+const colorStore = useColorStore()
+
 const selectedEvents = ref<string[]>([])
 const currentPage = ref(1)
 const rowsPerPage = ref('10')

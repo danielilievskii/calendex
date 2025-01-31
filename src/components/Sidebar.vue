@@ -67,10 +67,9 @@
             <div class="relative h-5 w-5">
               <input type="checkbox" :value="calendar.name" v-model="selectedCalendars"
                      class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
-                     :style="{
-                   backgroundColor: selectedCalendars.includes(calendar.name) ? calendar.color : 'white',
-                   borderColor: calendar.color
-               }"/>
+                     :class="[selectedCalendars.includes(calendar.name) ? colorStore.getBackgroundColor(calendar.color) : 'bg-white',
+                            colorStore.getBorderColor(calendar.color)
+               ]"/>
               <svg v-if="selectedCalendars.includes(calendar.name)"
                    class="absolute inset-0 m-auto h-4 w-4 text-white"
                    fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -122,6 +121,7 @@ import Button from '@/components/ui/button/Button.vue'
 
 import { useSidebarStore } from '@/stores/sidebar';
 import { useCalendarStore } from '@/stores/calendar';
+import { useColorStore } from '@/stores/colors';
 
 import {MoreVerticalIcon} from 'lucide-vue-next'
 
@@ -131,6 +131,7 @@ import { getLocalTimeZone, today } from '@internationalized/date'
 
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
+const colorStore = useColorStore();
 
 const selectedCalendars = ref([]);
 
