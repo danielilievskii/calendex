@@ -123,7 +123,6 @@ const radioOptions = [
 
 let events = ref([])
 
-const myURL = ref('https://calendar.google.com/calendar/ical/boban.joksimoski@gmail.com/public/basic.ics')
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 const handleSubmit = async () => {
@@ -192,16 +191,29 @@ const extractEvents = (icsContent: string) => {
       summary: icalEvent.summary,
       description: icalEvent.description,
       location: icalEvent.location,
-      startDate: icalEvent.startDate.toJSDate(),
-      endDate: icalEvent.endDate.toJSDate(),
+      startDateTime: icalEvent.startDate.toJSDate(),
+      startDate: extractDate(icalEvent.startDate.toJSDate()),
+      startTime: extractTime(icalEvent.startDate.toJSDate()),
+      endDateTime: icalEvent.endDate.toJSDate(),
+      endDate: extractDate(icalEvent.endDate.toJSDate()),
+      endTime: extractTime(icalEvent.endDate.toJSDate()),
       duration: icalEvent.duration,
       sequence: icalEvent.sequence,
       organizer: icalEvent.organizer,
       attendees: icalEvent.attendees,
-      color: icalEvent.color,
       uid: icalEvent.uid,
     }
   })
+}
+
+const extractDate = (dateTimeObj) => {
+  return dateTimeObj.toISOString().split("T")[0];
+}
+
+const extractTime = (dateTimeObj) => {
+  const hours = dateTimeObj.getHours();
+  const minutes = dateTimeObj.getMinutes();
+  return hours + minutes / 60;
 }
 
 const handleFileUpload = () => {
@@ -214,7 +226,7 @@ const handleFileUpload = () => {
       reader.onload = () => {
         const icsContent = reader.result as string;
         let results = extractEvents(icsContent);
-        console.log('Vo handleFileUpload:', results);
+        // console.log('Vo handleFileUpload:', results);
         resolve(results ?? []);
       };
       reader.onerror = () => reject(new Error("File reading failed"));
