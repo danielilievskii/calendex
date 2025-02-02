@@ -11,10 +11,10 @@
           <ErrorMessage name="Calendar name" class="text-red-500 text-sm" />
         </div>
 
-        <div class="w-full sm:w-1/2 ">
+        <div class="w-full sm:w-1/2">
           <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
           <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
-            <button
+            <button name="Calendar color"
               v-for="(colorClass, colorName) in colorMap"
               :key="colorName"
               @click="calendarColor = colorName"
@@ -22,6 +22,8 @@
               colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2' : '']"
             ></button>
           </div>
+          <ErrorMessage name="Calendar color" class="text-red-500 text-sm" />
+          <span v-if="!calendarColor" class="text-red-500 text-sm">Please choose a color</span>
         </div>
       </div>
 
@@ -44,12 +46,13 @@
             ></div>
           </div>
         </RadioGroup>
+        <ErrorMessage name="Calendar type" class="text-red-500 text-sm" />
+        <span v-if="!calendarType" class="text-red-500 text-sm">Please choose a calendar type</span>
       </div>
 
       <div class="mb-6">
         <span class="block text-sm font-medium text-gray-700">Import Method</span>
         <div class="mt-2 flex flex-col sm:flex-row gap-3">
-
           <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
           :class="importMethod === 'url' ? 'green-btn' : 'gray-btn'"
           @click="importMethod = 'url'">Use URL</button>
@@ -57,7 +60,6 @@
           <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
           :class="importMethod === 'file' ? 'green-btn' : 'gray-btn'"
           @click="importMethod = 'file'">Use downloaded file</button>
-
         </div>
       </div>
 
@@ -100,6 +102,12 @@ import { required, url } from '@vee-validate/rules';
 
 defineRule('required', required);
 defineRule('url', url);
+defineRule('colorRequired', value => {
+  return value ? true : 'Please choose a color';
+});
+defineRule('typeRequired', value => {
+  return value ? true : 'Please choose a calendar type';
+});
 
 const calendarStore = useCalendarStore();
 
@@ -133,6 +141,11 @@ let events = ref([])
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 const handleSubmit = async (values: any) => {
+
+  if (!calendarType.value) {
+    alert('Please choose a calendar type')
+    return
+  }
 
   if (importMethod.value === 'url' && !calendarUrl.value) {
     alert('Please provide an ICS URL')
