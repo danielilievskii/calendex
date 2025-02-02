@@ -1,9 +1,8 @@
 <template>
-  <div class="min-h-screen px-4 text-black">
+      <h1 class="text-4xl font-bold text-[#1B4332] mb-8">Events</h1>
+
+  <div class="min-h-screen text-black">
     <div class="rounded-md border border-gray-200 shadow-lg">
-      <div class="flex items-center justify-between p-4">
-        <h2 class="text-lg font-semibold">Events</h2>
-      </div>
 
       <Table class="table-fixed w-full">
         <TableHeader>

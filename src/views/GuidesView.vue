@@ -1,5 +1,5 @@
 <template>
-    <section class="">
+    <section class="p-24">
       <Faq/>
     </section>
   
@@ -15,6 +15,6 @@
   }
   </style>
   <script setup>
-  import Faq from "@/components/Faq.vue";
+  import Faq from "@/components/Guides.vue";
   </script>
   

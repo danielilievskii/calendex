@@ -4,7 +4,7 @@
       class="fixed text-white text-4xl top-5 left-4 cursor-pointer z-50"
       @click="sidebarStore.toggleSidebar">
     <i :class="['bi-filter-left px-2 rounded-md transition-all',
-        sidebarStore.isSidebarCollapsed ? 'bg-blue-700' : 'bg-gray-900'
+        sidebarStore.isSidebarCollapsed ? 'bg-[#40916C]' : 'bg-gray-900'
       ]"
     ></i>
   </span>
@@ -36,11 +36,7 @@
           <i class="fa-solid fa-list"></i>
           <span class="text-[18px] ml-4">Events</span>
         </RouterLink>
-        <RouterLink to="/faq"
-            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
-            <i class="bi bi-info-circle"></i>
-          <span class="text-[18px] ml-4">Help & FAQ</span>
-        </RouterLink>
+        
       </nav>
 
       <hr class="my-4" />
@@ -101,11 +97,30 @@
 
       <div class="flex justify-center mt-5">
         <RouterLink to="/calendar-import" class="inline-flex">
-          <button class="bg-[#587acc] hover:bg-[#6c8ccf] text-lg font-medium text-white py-2 px-4 duration-200 rounded-lg">
+            <button class="bg-[#40916C] hover:bg-[#52B788] text-lg font-medium text-white py-2 px-4 duration-200 rounded-lg">
             + Import Calendar
-          </button>
+            </button>
         </RouterLink>
       </div>
+
+      <hr class="my-4" />
+
+      <nav class="absolute bottom-0 w-full">
+        <RouterLink to="/guides"
+            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
+          <i class="bi bi-info-circle"></i>
+
+          <span class="text-[18px] ml-4">Guides</span>
+        </RouterLink>
+        <RouterLink to="/faq"
+            class="side-hover p-2.5 mt-2 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
+
+            <i class="bi bi-question-circle"></i>
+            
+          <span class="text-[18px] ml-4">FAQ</span>
+        </RouterLink>
+      </nav>
+
     </div>
   </div>
 </template>

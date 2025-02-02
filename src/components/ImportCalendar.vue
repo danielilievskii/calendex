@@ -30,13 +30,13 @@
           <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
           <label :for="option.value" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-blue-500">
+          peer-checked:border-[#40916C]">
             <i :class="option.icon"></i>
             {{ option.label }}
           </label>
           <div
             :class="[
-              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
+              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-[#40916C]',
               calendarType === option.value ? 'border-[3px]' : 'border-0'
             ]"
           ></div>
@@ -49,11 +49,11 @@
       <div class="mt-2 flex flex-col sm:flex-row gap-3">
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'url' ? 'blue-btn' : 'gray-btn'"
+        :class="importMethod === 'url' ? 'green-btn' : 'gray-btn'"
         @click="importMethod = 'url'">Use URL</button>
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'file' ? 'blue-btn' : 'gray-btn'"
+        :class="importMethod === 'file' ? 'green-btn' : 'gray-btn'"
         @click="importMethod = 'file'">Use downloaded file</button>
 
       </div>
@@ -80,7 +80,7 @@
       <button type="button" class="px-4 py-2 rounded-md text-sm font-medium gray-btn" @click="resetForm">Cancel</button>
       
       <button @click="handleSubmit" type="submit" class="px-4 py-2 rounded-md
-      text-sm font-medium shadow-sm blue-btn">Save</button>
+      text-sm font-medium shadow-sm green-btn">Save</button>
     </div>
   </div>
 </template>
@@ -251,14 +251,14 @@ const handleURLDownload = async () => {
 
 <style scoped>
 
-.blue-btn {
+.green-btn {
   color: white;
-  background-color: #587acc;
+  background-color: #40916C;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.blue-btn:hover {
-  background-color: #6c8ccf;
+.green-btn:hover {
+  background-color: #52B788;
 }
 
 

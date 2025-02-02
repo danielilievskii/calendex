@@ -1,12 +1,23 @@
 <template>
-    <Accordion type="single" class="w-1/2" collapsible :default-value="defaultValue">
-    <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
-      <AccordionTrigger>{{ item.title }}</AccordionTrigger>
-      <AccordionContent>
-        {{ item.content }}
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion>
+  <div class="flex flex-col md:flex-row justify-between gap-22">
+    
+    <div class="flex-1 p-6 pt-20 md:p-24">
+      <h1 class="text-4xl font-bold text-[#1B4332] mb-8 text-left">Frequently Asked Questions</h1>
+      <Accordion type="single" class="" collapsible :default-value="defaultValue">
+        <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
+          <AccordionTrigger class="text-left">{{ item.title }}</AccordionTrigger>
+          <AccordionContent class="text-left">
+            {{ item.content }}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+
+    <div class="flex-1 flex justify-center hidden md:block mr-20 mt-14">
+      <img src="/src/assets/faq.jpg" alt="Frequently Asked Questions" class="" />
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -30,35 +41,11 @@ export default {
         { value: 'item-6', title: 'Are ICS files compatible across different platforms?', content: 'Yes, ICS files are designed to be compatible across different platforms and calendar applications.' },
         { value: 'item-7', title: 'Can I edit an ICS file?', content: 'Yes, you can edit an ICS file using a text editor or within your calendar application.' },
         { value: 'item-8', title: 'What information is stored in an ICS file?', content: 'An ICS file typically contains event details such as title, date, time, location, and description.' },
-      ]
+      ],
     }
   }
 }
 </script>
 
 <style scoped>
-.faq {
-    padding: 20px;
-}
-
-.faq-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.faq-item {
-    margin-bottom: 10px;
-}
-
-.faq-question {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.faq-answer {
-    margin-top: 5px;
-    font-size: 16px;
-}
 </style>
