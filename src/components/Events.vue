@@ -46,8 +46,8 @@
             </TableCell>
             <TableCell class="w-1/6 px-4 py-2">{{ event.location || "No location" }}</TableCell>
             <TableCell class="w-1/6 px-4 py-2">{{ formatDate(event.startDate) }}</TableCell>
-            <TableCell class="w-1/6 px-4 py-2">
-              <Badge>{{ formatDuration(event.duration) || 'Unknown' }}</Badge>
+            <TableCell class="w-1/6 px-4 py-2 pl-8">
+                <Badge class="bg-[#52B788]">{{ formatDuration(event.duration) || 'Unknown' }}</Badge>
             </TableCell>
           </TableRow>
 

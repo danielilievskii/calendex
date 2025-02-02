@@ -1,98 +1,105 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-md border border-gray-200 shadow-lg w-full sm:w-auto">
-    <div class="mb-6 flex flex-col sm:flex-row gap-4">
-      <div class="w-full sm:w-1/2">
-        <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
-        <input v-model="calendarName" type="text" name="name" id="name" 
-        class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
-        focus:ring-indigo-500 sm:text-sm p-1.5" 
-        placeholder="Enter calendar name" />
-      </div>
+  <Form @submit="handleSubmit" v-slot="{ errors }">
+    <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-md border border-gray-200 shadow-lg w-full sm:w-auto">
+      <div class="mb-6 flex flex-col sm:flex-row gap-4">
+        <div class="w-full sm:w-1/2">
+          <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
+          <Field v-model="calendarName" name="name" id="name" 
+          class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
+          focus:ring-indigo-500 sm:text-sm p-1.5" 
+          placeholder="Enter calendar name" rules="required" />
+          <ErrorMessage name="name" class="text-red-500 text-sm" />
+        </div>
 
-      <div class="w-full sm:w-1/2 ">
-        <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
-        <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
-          <button
-            v-for="(colorClass, colorName) in colorMap"
-            :key="colorName"
-            @click="calendarColor = colorName"
-            :class="['w-6 h-6 rounded-full cursor-pointer', 
-            colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2' : '']"
-          ></button>
+        <div class="w-full sm:w-1/2 ">
+          <label for="color" class="block text-sm font-medium text-gray-700">Choose Color</label>
+          <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
+            <button
+              v-for="(colorClass, colorName) in colorMap"
+              :key="colorName"
+              @click="calendarColor = colorName"
+              :class="['w-6 h-6 rounded-full cursor-pointer', 
+              colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2' : '']"
+            ></button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-6">
-      <label class="block text-sm font-medium text-gray-700">Calendar Type</label>
-      <RadioGroup v-model="calendarType" default-value="google" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div v-for="option in radioOptions" :key="option.value" @click="calendarType = option.value" class="relative">
-          <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
-          <label :for="option.value" class="flex flex-col items-center justify-between 
-          rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-[#40916C]">
-            <i :class="option.icon"></i>
-            {{ option.label }}
-          </label>
-          <div
-            :class="[
-              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-[#40916C]',
-              calendarType === option.value ? 'border-[3px]' : 'border-0'
-            ]"
-          ></div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700">Calendar Type</label>
+        <RadioGroup v-model="calendarType" default-value="google" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div v-for="option in radioOptions" :key="option.value" @click="calendarType = option.value" class="relative">
+            <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
+            <label :for="option.value" class="flex flex-col items-center justify-between 
+            rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
+            peer-checked:border-[#40916C]">
+              <i :class="option.icon"></i>
+              {{ option.label }}
+            </label>
+            <div
+              :class="[
+                'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-[#40916C]',
+                calendarType === option.value ? 'border-[3px]' : 'border-0'
+              ]"
+            ></div>
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div class="mb-6">
+        <span class="block text-sm font-medium text-gray-700">Import Method</span>
+        <div class="mt-2 flex flex-col sm:flex-row gap-3">
+
+          <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
+          :class="importMethod === 'url' ? 'green-btn' : 'gray-btn'"
+          @click="importMethod = 'url'">Use URL</button>
+
+          <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
+          :class="importMethod === 'file' ? 'green-btn' : 'gray-btn'"
+          @click="importMethod = 'file'">Use downloaded file</button>
+
         </div>
-      </RadioGroup>
-    </div>
+      </div>
 
-    <div class="mb-6">
-      <span class="block text-sm font-medium text-gray-700">Import Method</span>
-      <div class="mt-2 flex flex-col sm:flex-row gap-3">
+      <div v-if="importMethod === 'url'" class="mb-6">
+        <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
+        <Field v-model="calendarUrl" name="icsUrl" id="icsUrl" 
+        class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
+          focus:ring-indigo-500 sm:text-sm p-2"
+         placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" rules="required|url" />
+        <ErrorMessage name="icsUrl" class="text-red-500 text-sm" />
+        <router-link to="/faq" class="text-blue-500 hover:underline text-sm">Need help finding your URL?</router-link>
+      </div>
 
-        <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'url' ? 'green-btn' : 'gray-btn'"
-        @click="importMethod = 'url'">Use URL</button>
+      <div v-if="importMethod === 'file'" class="mb-6">
+        <label for="iscFile" class="block text-sm font-medium text-gray-700">Upload downloaded ICS File</label>
+        <input ref="calendarFile" type="file" id="iscFile" 
+        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+        file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50
+        file:text-[#587acc] hover:file:bg-indigo-100 cursor-pointer" />
+      </div>
 
-        <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
-        :class="importMethod === 'file' ? 'green-btn' : 'gray-btn'"
-        @click="importMethod = 'file'">Use downloaded file</button>
-
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" class="px-4 py-2 rounded-md text-sm font-medium gray-btn" @click="resetForm">Cancel</button>
+        
+        <button type="submit" class="px-4 py-2 rounded-md
+        text-sm font-medium shadow-sm green-btn">Save</button>
       </div>
     </div>
-
-    <div v-if="importMethod === 'url'" class="mb-6">
-      <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
-      <input v-model="calendarUrl" type="text" id="icsUrl" 
-      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
-        focus:ring-indigo-500 sm:text-sm p-2"
-       placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
-      <router-link to="/faq" class="text-blue-500 hover:underline text-sm">Need help finding your URL?</router-link>
-    </div>
-
-    <div v-if="importMethod === 'file'" class="mb-6">
-      <label for="iscFile" class="block text-sm font-medium text-gray-700">Upload downloaded ICS File</label>
-      <input ref="calendarFile" type="file" id="iscFile" 
-      class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-      file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50
-      file:text-[#587acc] hover:file:bg-indigo-100 cursor-pointer" />
-    </div>
-
-    <div class="flex items-center justify-end gap-3">
-      <button type="button" class="px-4 py-2 rounded-md text-sm font-medium gray-btn" @click="resetForm">Cancel</button>
-      
-      <button @click="handleSubmit" type="submit" class="px-4 py-2 rounded-md
-      text-sm font-medium shadow-sm green-btn">Save</button>
-    </div>
-  </div>
+  </Form>
 </template>
 
 <script setup lang="ts">
-
 import { ref } from 'vue'
 import axios from 'axios'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
+import { Field, Form, ErrorMessage, defineRule } from 'vee-validate';
+import { required, url } from '@vee-validate/rules';
 
+defineRule('required', required);
+defineRule('url', url);
 
 const calendarStore = useCalendarStore();
 
@@ -125,18 +132,7 @@ let events = ref([])
 
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
-const handleSubmit = async () => {
-  // TODO: Change the form validation
-
-  if (!calendarName.value) {
-    alert('Please provide a calendar name')
-    return
-  }
-
-  if (!calendarType.value) {
-    alert('Please select a calendar type')
-    return
-  }
+const handleSubmit = async (values: any) => {
 
   if (importMethod.value === 'url' && !calendarUrl.value) {
     alert('Please provide an ICS URL')
@@ -146,7 +142,6 @@ const handleSubmit = async () => {
     alert('Please upload an ICS file')
     return
   }
-
 
   if (importMethod.value === 'url') {
     let result = await handleURLDownload();
