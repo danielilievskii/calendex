@@ -4,11 +4,11 @@
       <div class="mb-6 flex flex-col sm:flex-row gap-4">
         <div class="w-full sm:w-1/2">
           <label for="name" class="block text-sm font-medium text-gray-700">Calendar Name</label>
-          <Field v-model="calendarName" name="name" id="name" 
+          <Field v-model="calendarName" name="Calendar name" id="name" 
           class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
           focus:ring-indigo-500 sm:text-sm p-1.5" 
           placeholder="Enter calendar name" rules="required" />
-          <ErrorMessage name="name" class="text-red-500 text-sm" />
+          <ErrorMessage name="Calendar name" class="text-red-500 text-sm" />
         </div>
 
         <div class="w-full sm:w-1/2 ">
@@ -63,11 +63,11 @@
 
       <div v-if="importMethod === 'url'" class="mb-6">
         <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
-        <Field v-model="calendarUrl" name="icsUrl" id="icsUrl" 
+        <Field v-model="calendarUrl" name="ICS Url" id="icsUrl" 
         class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
           focus:ring-indigo-500 sm:text-sm p-2"
          placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" rules="required|url" />
-        <ErrorMessage name="icsUrl" class="text-red-500 text-sm" />
+        <ErrorMessage name="ICS Url" class="text-red-500 text-sm" />
         <router-link to="/faq" class="text-blue-500 hover:underline text-sm">Need help finding your URL?</router-link>
       </div>
 
