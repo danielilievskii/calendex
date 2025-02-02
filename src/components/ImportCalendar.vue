@@ -139,34 +139,16 @@ const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 const handleSubmit = async (values: any) => {
   
-  if (!calendarName.value) {
-    errCalName.value = true;
-  }else{
-    errCalName.value = false;
-  }
+  errCalName.value = !calendarName.value;
+  errCalColor.value = !calendarColor.value;
+  errCalType.value = !calendarType.value;
 
-  if (!calendarColor.value) {
-    errCalColor.value = true;
-  }else{
-    errCalColor.value = false;
-  }
-
-  if (!calendarType.value) {
-    errCalType.value = true;
-  } else{
-    errCalType.value = false;
-  }
-
-  if (!calendarUrl.value) {
-    errCalUrl.value = true;
-  } else{
-    errCalUrl.value = false;
-  } 
-
-  if(calendarFile.value && !calendarFile.value.files[0]) {
-    errCalFile.value = true;
-  } else{
+  if (importMethod.value === 'url') {
+    errCalUrl.value = !calendarUrl.value;
     errCalFile.value = false;
+  } else {
+    errCalFile.value = !(calendarFile.value && calendarFile.value.files[0]);
+    errCalUrl.value = false;
   }
 
 
