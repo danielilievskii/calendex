@@ -137,6 +137,7 @@ let events = ref([])
 
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
+//TODO:
 const handleSubmit = async (values: any) => {
   
   errCalName.value = !calendarName.value;
@@ -147,12 +148,11 @@ const handleSubmit = async (values: any) => {
     errCalUrl.value = !calendarUrl.value;
     errCalFile.value = false;
   } else {
-    errCalFile.value = !(calendarFile.value && calendarFile.value.files[0]);
+    errCalFile.value = !(calendarFile.value && calendarFile.value?.files[0]);
     errCalUrl.value = false;
   }
 
-
-  if(errCalName.value || errCalColor.value || errCalType.value || (errCalUrl.value || errCalFile.value)){ 
+  if(errCalName.value || errCalColor.value || errCalType.value || (errCalUrl.value || errCalFile.value)){
     return;
   }
 
@@ -161,6 +161,7 @@ const handleSubmit = async (values: any) => {
     
     let result = await handleURLDownload();
     if(!result){
+      alert('Error fetching from url')
       return;
     }
     events.value = result;
@@ -204,6 +205,35 @@ const extractEvents = (icsContent: string) => {
 
   return vevents.map(event => {
     const icalEvent = new ICAL.default.Event(event)
+    console.log(icalEvent)
+    console.log('Freq: ' + icalEvent.component.jCal[1][2][3].freq)
+    // AKO ima freq, vazhat dolnite pravila - vo sprotivno samo startDate i endDate gledash i dodaj multiDay: true
+
+    // ako freq e DAILY i imame ist startDate i endDate, koristime samo startDay i daily do kraj
+    console.log('Until: ' + icalEvent.component.jCal[1][2][3].until)
+
+    // ako freq e DAILY i imame razl startDate i endDate - nema until i gi koristime startDate i endDate
+
+    // ako imame interval kaj daily, toa znachi na tolku dena da se pojavuva - soodvetno za weekly, monthly itn
+    console.log('Interval: ' + icalEvent.component.jCal[1][2][3].interval)
+
+    // ako imame count kaj daily, toa znachi tolku dena se pojavuva / occurences
+    console.log('Count: ' + icalEvent.component.jCal[1][2][3].count)
+
+    // ako freq e WEEKLY imame byday - ili SU ili array od ['FR', 'MO', 'TH', 'TU', 'WE']
+    console.log('byDay: ' + icalEvent.component.jCal[1][2][3].byday)
+
+
+    // ako freq e MONTHLY imame byday:
+    //4SU za fourth sunday od mesecot
+    //1SU za prv sunday od mesecot
+    //-1SU za posleden sunday od mesecot
+
+    //ako freq e YEARLY gleadme samo startDate i endDate
+    // nemame nishto
+
+
+
     return {
       summary: icalEvent.summary,
       description: icalEvent.description,
@@ -261,7 +291,7 @@ const handleURLDownload = async () => {
     return events ?? [];
   } catch (error) {
     console.error("Error fetching URL:", error);
-    return [];
+    return null;
   }
 };
 </script>
@@ -270,12 +300,13 @@ const handleURLDownload = async () => {
 
 .green-btn {
   color: white;
-  background-color: #40916C;
+  background-color: #31776c;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+
 .green-btn:hover {
-  background-color: #52B788;
+  background-color: #3e9c86;
 }
 
 

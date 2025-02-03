@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-4xl font-bold text-[#1B4332] mb-8">Guides</h1>
+  <h1 class="text-4xl font-bold text-[#31776c] mb-8">Guides</h1>
 
   <div class="min-h-screen ">
     <div class="">

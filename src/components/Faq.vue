@@ -2,8 +2,8 @@
   <div class="flex flex-col md:flex-row justify-between gap-22">
     
     <div class="flex-1 p-6 pt-20 md:p-24">
-      <h1 class="text-4xl font-bold text-[#1B4332] mb-8 text-left">Frequently Asked Questions</h1>
-      <Accordion type="single" class="" collapsible :default-value="defaultValue">
+      <h1 class="text-4xl font-bold text-[#31776c] mb-8 text-left">Frequently Asked Questions</h1>
+      <Accordion type="single" class="bg-white rounded-lg px-3" collapsible :default-value="defaultValue">
         <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
           <AccordionTrigger class="text-left">{{ item.title }}</AccordionTrigger>
           <AccordionContent class="text-left">
@@ -14,7 +14,7 @@
     </div>
 
     <div class="flex-1 flex justify-center hidden md:block mr-20 mt-14">
-      <img src="/src/assets/faq.jpg" alt="Frequently Asked Questions" class="" />
+      <img src="/src/assets/faq-removebg.png" alt="Frequently Asked Questions" class="" />
     </div>
 
   </div>

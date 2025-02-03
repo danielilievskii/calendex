@@ -1,16 +1,16 @@
 <template>
-      <h1 class="text-4xl font-bold text-[#1B4332] mb-8">Events</h1>
+      <h1 class="text-4xl font-bold text-[#31776c] mb-8">Events</h1>
 
   <div class="min-h-screen text-black">
     <div class="rounded-md border border-gray-200 shadow-lg">
 
       <Table class="table-fixed w-full">
-        <TableHeader>
-          <TableRow class="bg-gray-200/50 hover:bg-gray-200/50">
+        <TableHeader class="">
+          <TableRow class="bg-white hover:bg-gray-200/50">
             <TableHead
                 v-for="header in headers"
                 :key="header.key"
-                class="font-bold text-lg cursor-pointer px-4 py-2 text-left"
+                class="font-bold text-lg cursor-pointer px-4 py-2 text-left text-[#31776c]"
                 :class="{
           'w-1/5': header.key === 'calendarName',
           'w-1/4': header.key === 'summary',
@@ -26,11 +26,11 @@
           </TableRow>
         </TableHeader>
 
-        <TableBody>
+        <TableBody class="bg-white">
           <TableRow
               v-for="event in sortedEvents"
               :key="event.uid"
-              class="hover:bg-gray-200/50"
+              class="hover:bg-[#e0f1eb]"
           >
             <TableCell class="w-1/5 px-4 py-2">
               <div class="flex items-center gap-2">
@@ -57,7 +57,7 @@
         </TableBody>
       </Table>
 
-      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-300">
+      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-300 bg-white">
         <div class="text-sm text-gray-400">
           {{ selectedEvents.length }} of {{ calendarStore.filteredEvents.length }} row(s) selected.
         </div>
