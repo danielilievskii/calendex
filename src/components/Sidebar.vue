@@ -10,7 +10,7 @@
   </span>
 
   <!-- Sidebar -->
-  <div :class="['sidebar fixed top-0 bottom-0 h-screen shadow overflow-y-auto transition-all duration-300 z-40',
+  <div :class="['sidebar  bg-[#F6F5F8] fixed top-0 bottom-0 h-screen shadow overflow-y-auto transition-all duration-300 z-40',
       sidebarStore.isSidebarCollapsed ? 'w-0 lg:w-[0px]' : 'w-[300px] lg:w-[300px]']">
 
     <div class="relative left-20 top-6" v-if="!sidebarStore.isSidebarCollapsed">
@@ -31,10 +31,10 @@
           <span class="text-[18px] ml-4"> Calendar </span>
         </RouterLink>
 
-        <RouterLink to="/events"
+        <RouterLink to="/agenda"
                     class="side-hover px-2.5 py-1.5 mt-1 flex items-center rounded-md mx-5 duration-200 cursor-pointer">
           <i class="fa-solid fa-list"></i>
-          <span class="text-[18px] ml-4">Events</span>
+          <span class="text-[18px] ml-4">Agenda</span>
         </RouterLink>
 
 
@@ -67,17 +67,17 @@
         <div v-if="calendarStore.calendars.length === 0" class="px-2 py-1">
           Empty
         </div>
-        <label v-else v-for="calendar in calendarStore.calendars" :key="calendar.id"
+        <label v-else v-for="calendar in calendarStore.calendars" :key="calendar.uid"
                class="flex items-center flex-row justify-between w-full side-hover cursor-pointer px-2 rounded-md mt-1"
         >
           <div class="flex items-center">
             <div class="relative h-5 w-5">
-              <input type="checkbox" :value="calendar.name" v-model="selectedCalendars"
+              <input type="checkbox" :value="calendar.uid" v-model="selectedCalendars"
                      class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
-                     :class="[selectedCalendars.includes(calendar.name) ? colorStore.getBackgroundColor(calendar.color) : 'bg-white',
+                     :class="[selectedCalendars.includes(calendar.uid) ? colorStore.getBackgroundColor(calendar.color) : 'bg-white',
                             colorStore.getBorderColor(calendar.color)
                ]"/>
-              <svg v-if="selectedCalendars.includes(calendar.name)"
+              <svg v-if="selectedCalendars.includes(calendar.uid)"
                    class="absolute inset-0 m-auto h-4 w-4 text-white"
                    fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"
                    xmlns="http://www.w3.org/2000/svg">
@@ -85,7 +85,7 @@
               </svg>
             </div>
             <span :class="['ml-2 font-[600] text-[15px]']"
-                  :style="{color: selectedCalendars.includes(calendar.name) ? '#000000' : '#c4c4c7'}"
+                  :style="{color: selectedCalendars.includes(calendar.uid) ? '#000000' : '#c4c4c7'}"
             >{{ calendar.name }}
             </span>
           </div>
@@ -99,9 +99,9 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem @click="editCalendar(calendar.id)">Edit</DropdownMenuItem>
+                <DropdownMenuItem @click="editCalendar(calendar.uid)">Edit</DropdownMenuItem>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.id)">Delete</DropdownMenuItem>
+                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -163,7 +163,7 @@ const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
 const colorStore = useColorStore();
 
-const selectedCalendars = ref([]);
+const selectedCalendars = ref(calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid));
 
 watch(selectedCalendars, (newVal) => {
   calendarStore.updateFilteredEvents(newVal)
@@ -177,8 +177,9 @@ function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;
 }
 
-const deleteCalendar = (id: string) => {
-  calendarStore.deleteCalendar(id);
+const deleteCalendar = (uid: string) => {
+  selectedCalendars.value = selectedCalendars.value.filter(calendar => calendar.uid !== uid);
+  calendarStore.deleteCalendar(uid);
 };
 
 const editCalendar = (id: string) => {
@@ -192,7 +193,7 @@ const editCalendar = (id: string) => {
 
 <style scoped>
 .sidebar {
-  background: #F6F5F8;
+  /*background: #F6F5F8;*/
 }
 
 .side-hover:hover, h1:hover {
