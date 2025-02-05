@@ -12,6 +12,16 @@ export const calculateWeeksBetween = (startDate, endDate) => { //from 2025-02-02
     return Math.ceil(differenceInMs / (1000 * 60 * 60 * 24 * 7)) - 1;
 }
 
+export const calculateMonthsBetween = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const yearsDiff = end.getFullYear() - start.getFullYear();
+    const monthsDiff = end.getMonth() - start.getMonth();
+
+    return yearsDiff * 12 + monthsDiff - (end < new Date(start.getFullYear(), start.getMonth(), end.getDate()) ? 1 : 0);
+};
+
 export const calculateYearsBetween = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -63,6 +73,48 @@ export const getNumValueForJSDay = (JSDay) => {
             return 5
         }
     }
+}
+
+export const extractDate = (dateTimeObj) => {
+    const localDateTime = dateTimeObj.toLocaleString(undefined, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        millisecond: '3-digit',
+        hour12: false,
+        timeZoneName: 'short'
+    }).replace(/,/g, '').replace(' ', 'T');
+
+    let date = localDateTime.split("T")[0].split("/")
+
+    return date[2] + '-' + date[0] + '-' + date[1] ;
+};
+
+export const extractTime = (dateTimeObj) => {
+    const localDateTime = dateTimeObj.toLocaleString(undefined, {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+    });
+
+    const [hours, minutes] = localDateTime.split(':').map((part) => parseInt(part));
+    return hours + minutes / 60;
+}
+export const subtractOneDay = (date) => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() - 1);
+    return newDate;
+}
+
+export const isSameDate = (date1, date2) => {
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+    );
 }
 
 export const formatDate = (date) => {
