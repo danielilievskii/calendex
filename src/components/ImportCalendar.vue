@@ -97,7 +97,7 @@ import axios from 'axios'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
-
+import { formatDuration, extractDate, extractTime } from  "@/utils/dateUtils.js"
 
 const calendarStore = useCalendarStore();
 
@@ -174,12 +174,15 @@ const handleSubmit = async (values: any) => {
   }
 
   const calendar = {
+    uid: generateUniqueId(calendarName.value, calendarUrl.value ?? 'file'),
     name: calendarName.value,
     color: calendarColor.value,
     type: calendarType.value,
     url: calendarUrl.value,
     events: events.value,
   }
+
+  console.log(events.value)
 
   calendarStore.addCalendar(calendar);
   alert("Calendar added successfully")
@@ -195,7 +198,19 @@ const resetForm = () => {
 
   importMethod.value = 'url';
   calendarFile.value = null
+}
 
+function generateUniqueId(name, url) {
+  const input = name + url;
+  let hash = 0;
+
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+
+  return Math.abs(hash).toString(36); // Convert to base-36 (numbers + letters)
 }
 
 const extractEvents = (icsContent: string) => {
@@ -205,23 +220,28 @@ const extractEvents = (icsContent: string) => {
 
   return vevents.map(event => {
     const icalEvent = new ICAL.default.Event(event)
-    console.log(icalEvent)
-    console.log('Freq: ' + icalEvent.component.jCal[1][2][3].freq)
-    // AKO ima freq, vazhat dolnite pravila - vo sprotivno samo startDate i endDate gledash i dodaj multiDay: true
-
-    // ako freq e DAILY i imame ist startDate i endDate, koristime samo startDay i daily do kraj
-    console.log('Until: ' + icalEvent.component.jCal[1][2][3].until)
-
-    // ako freq e DAILY i imame razl startDate i endDate - nema until i gi koristime startDate i endDate
-
-    // ako imame interval kaj daily, toa znachi na tolku dena da se pojavuva - soodvetno za weekly, monthly itn
-    console.log('Interval: ' + icalEvent.component.jCal[1][2][3].interval)
-
-    // ako imame count kaj daily, toa znachi tolku dena se pojavuva / occurences
-    console.log('Count: ' + icalEvent.component.jCal[1][2][3].count)
-
-    // ako freq e WEEKLY imame byday - ili SU ili array od ['FR', 'MO', 'TH', 'TU', 'WE']
-    console.log('byDay: ' + icalEvent.component.jCal[1][2][3].byday)
+    // console.log(icalEvent)
+    // console.log('Freq: ' + icalEvent.component.jCal[1][2][3].freq)
+    // // AKO ima freq, vazhat dolnite pravila - vo sprotivno samo startDate i endDate gledash i dodaj multiDay: true
+    //
+    // // ako freq e DAILY i imame ist startDate i endDate, koristime samo startDay i daily do kraj
+    // console.log('Until: ' + icalEvent.component.jCal[1][2][3].until)
+    //
+    // // ako freq e DAILY i imame razl startDate i endDate - nema until i gi koristime startDate i endDate
+    //
+    // // ako imame interval kaj daily, toa znachi na tolku dena da se pojavuva - soodvetno za weekly, monthly itn
+    // console.log('Interval: ' + icalEvent.component.jCal[1][2][3].interval)
+    //
+    // // ako imame count kaj daily, toa znachi tolku dena se pojavuva / occurences
+    // console.log('Count: ' + icalEvent.component.jCal[1][2][3].count)
+    //
+    // // ako freq e WEEKLY imame byday - ili SU ili array od ['FR', 'MO', 'TH', 'TU', 'WE']
+    // console.log('byDay: ' + icalEvent.component.jCal[1][2][3].byday)
+    //
+    //
+    // console.log('byMonthDay: ' + icalEvent.component.jCal[1][2][3].bymonthday)
+    //
+    // console.log('uid: ' + icalEvent.uid)
 
 
     // ako freq e MONTHLY imame byday:
@@ -229,39 +249,40 @@ const extractEvents = (icsContent: string) => {
     //1SU za prv sunday od mesecot
     //-1SU za posleden sunday od mesecot
 
+    //bymonthday: 4
+
     //ako freq e YEARLY gleadme samo startDate i endDate
     // nemame nishto
 
 
 
     return {
-      summary: icalEvent.summary,
-      description: icalEvent.description,
-      location: icalEvent.location,
+      uid: icalEvent.uid,
       startDateTime: icalEvent.startDate.toJSDate(),
       startDate: extractDate(icalEvent.startDate.toJSDate()),
       startTime: extractTime(icalEvent.startDate.toJSDate()),
       endDateTime: icalEvent.endDate.toJSDate(),
       endDate: extractDate(icalEvent.endDate.toJSDate()),
       endTime: extractTime(icalEvent.endDate.toJSDate()),
+      freq: icalEvent.component.jCal[1][2][3].freq,
+      until: icalEvent.component.jCal[1][2][3].until,
+      count: icalEvent.component.jCal[1][2][3].count,
+      interval: icalEvent.component.jCal[1][2][3].interval,
+      wkst: icalEvent.component.jCal[1][2][3].wkst,
+      byDay: icalEvent.component.jCal[1][2][3].byday ?? '',
+      byMonthDay: icalEvent.component.jCal[1][2][3].bymonthday,
       duration: icalEvent.duration,
+      formattedDuration: formatDuration(icalEvent.startDate.toJSDate(), icalEvent.endDate.toJSDate()),
+      summary: icalEvent.summary,
+      description: icalEvent.description,
+      location: icalEvent.location,
       sequence: icalEvent.sequence,
       organizer: icalEvent.organizer,
       attendees: icalEvent.attendees,
-      uid: icalEvent.uid,
     }
   })
 }
 
-const extractDate = (dateTimeObj) => {
-  return dateTimeObj.toISOString().split("T")[0];
-}
-
-const extractTime = (dateTimeObj) => {
-  const hours = dateTimeObj.getHours();
-  const minutes = dateTimeObj.getMinutes();
-  return hours + minutes / 60;
-}
 
 const handleFileUpload = () => {
   return new Promise((resolve, reject) => {
