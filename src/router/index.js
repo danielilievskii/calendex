@@ -9,9 +9,9 @@ const router = createRouter({
       component: () => import('../views/CalendarView.vue')
     },
     {
-      path: '/events',
-      name: 'events',
-      component: () => import('../views/EventsView.vue'),
+      path: '/agenda',
+      name: 'agenda',
+      component: () => import('../views/AgendaView.vue'),
     },
     {
       path: '/calendar-import',

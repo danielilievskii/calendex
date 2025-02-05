@@ -15,5 +15,5 @@
 }
 </style>
 <script setup>
-import Events from "@/components/Events.vue";
+import Events from "@/components/Agenda.vue";
 </script>

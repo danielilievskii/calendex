@@ -1,5 +1,5 @@
 <template>
-      <h1 class="text-4xl font-bold text-[#31776c] mb-8">Events</h1>
+      <h1 class="text-4xl font-bold text-[#31776c] mb-8">Agenda</h1>
 
   <div class="min-h-screen text-black">
     <div class="rounded-md border border-gray-200 shadow-lg">
@@ -178,6 +178,7 @@ const formatDate = (date: string) => {
   });
 }
 
+//TODO: fix duration since we are now saving pure string
 const formatDuration = (duration: any) => {
     if(typeof duration === 'object' && duration !== null) {
       const weeks = duration.weeks || 0;
