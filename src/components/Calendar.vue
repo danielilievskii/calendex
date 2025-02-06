@@ -33,16 +33,17 @@
           display: 'grid',
           gridTemplateRows: `repeat(auto-fill, 35px)`}" >
           <div
+              @click="toggleModal(event)"
               v-for="event in getMultiDayEvents(day.date)"
               :key="event.uid"
-              class="event p-1.5 text-sm mb-1"
+              class="event p-1.5 text-sm mb-1 cursor-pointer"
               :style="{
            ...getEventStyle(event, day.date, event.calendarColor),
 
          }"
               :class="[colorStore.getBorderColor(event.calendarColor), colorStore.getBackgroundLightColor(event.calendarColor)]"
           >
-            <h2 class="font-semibold">{{ event.summary }}</h2>
+            <h2 class="font-semibold text-center">{{ event.summary }}</h2>
           </div>
 
         </template>
@@ -72,9 +73,10 @@
                  :class="[day.date === todayISO && 'bg-green-50']"></div>
 
             <div
+                @click="toggleModal(event)"
                 v-for="event in getSingleDayEvents(day.date)"
                 :key="event.uid"
-                class="event absolute w-[90%] p-1.5 rounded-md text-sm shadow-md border-l-[5px]"
+                class="event absolute w-[90%] p-1.5 rounded-md text-sm shadow-md border-l-[5px] cursor-pointer"
                 :style="{ ...getEventStyle(event, day.date)}"
                 :class="[colorStore.getBorderColor(event.calendarColor), colorStore.getBackgroundLightColor(event.calendarColor)]"
             >
@@ -86,13 +88,18 @@
       </div>
     </div>
   </div>
+
+  <Modal v-show="showModal" :toggleModal="toggleModal" :showModal="showModal" :selectedEvent="selectedEvent.value"/>
+  <button @click="toggleModal">Modal</button>
+
+
 </template>
 
 <script setup>
 import {useColorStore} from '@/stores/colors';
 import {useCalendarStore} from '@/stores/calendar';
 
-import {ref, computed, onMounted} from "vue";
+import {ref, computed, onMounted, reactive} from "vue";
 import {format, addDays, startOfWeek} from "date-fns";
 import {
   calculateDaysBetween,
@@ -103,9 +110,24 @@ import {
   getDaysInYear,
   getNumValueForICSDay, getNumValueForJSDay, isSameDate, subtractOneDay, extractDate
 } from "@/utils/dateUtils.js";
+import Modal from "@/components/Modal.vue";
 
 const colorStore = useColorStore();
 const calendarStore = useCalendarStore();
+
+const showModal = ref(false);
+
+const toggleModal = (event) => {
+  showModal.value = !showModal.value;
+
+  if(event) {
+    selectedEvent.value = event;
+  } else {
+    selectedEvent.value = {}
+  }
+}
+
+const selectedEvent = reactive({});
 
 
 let events = computed(() => {
