@@ -4,8 +4,9 @@
       <div class="w-full sm:w-1/2">
         <label for="name" class="block text-sm font-medium text-gray-700">Calendar name</label>
         <input v-model="calendarName" type="text" name="name" id="name" 
-        class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500 
-        focus:ring-indigo-500 sm:text-sm p-1.5" 
+        class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm
+        focus:border-[#52b788] focus:ring-1 focus:ring-[#52b788] focus:outline-none
+         sm:text-sm p-1.5"
         placeholder="Enter calendar name" />
         <span v-if="errCalName" class="text-red-500">Please enter a calendar name</span>
       </div>
@@ -18,7 +19,7 @@
             :key="colorName"
             @click="calendarColor = colorName"
             :class="['w-6 h-6 rounded-full cursor-pointer', 
-            colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2' : '']"
+            colorClass, calendarColor === colorName ? 'ring-2 ring-offset-2 ring-[#52b788]' : '']"
           ></button>
         </div>
         <span v-if="errCalColor" class="text-red-500">Please choose a color</span>
@@ -32,13 +33,13 @@
           <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
           <label :for="option.value" class="flex flex-col items-center justify-between 
           rounded-md border-2 border-gray-300 bg-white p-4 hover:bg-gray-50 
-          peer-checked:border-blue-500">
+          peer-checked:border-[#31776c]">
             <i :class="option.icon"></i>
             {{ option.label }}
           </label>
           <div
             :class="[
-              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-blue-500',
+              'absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg border-[#52b788]',
               calendarType === option.value ? 'border-[3px]' : 'border-0'
             ]"
           ></div>
@@ -65,8 +66,8 @@
     <div v-if="importMethod === 'url'" class="mb-6">
       <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
       <input v-model="calendarUrl" type="text" id="icsUrl" 
-      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm focus:border-indigo-500
-        focus:ring-indigo-500 sm:text-sm p-2"
+      class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm
+      focus:border-[#52b788] focus:ring-1 focus:ring-[#52b788] focus:outline-none sm:text-sm p-2"
        placeholder="https://calendar.google.com/calendar/ical/email/public/basic.ics" />
 
        
