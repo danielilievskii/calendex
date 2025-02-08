@@ -38,7 +38,7 @@
               :key="event.uid"
               class="event p-1.5 text-sm mb-1 cursor-pointer"
               :style="{
-           ...getEventStyle(event, day.date, event.calendarColor),
+           ...getEventStyle(event, day.date),
 
          }"
               :class="[colorStore.getBorderColor(event.calendarColor), colorStore.getBackgroundLightColor(event.calendarColor)]"
@@ -76,11 +76,11 @@
                 @click="toggleModal(event)"
                 v-for="event in getSingleDayEvents(day.date)"
                 :key="event.uid"
-                class="event absolute w-[90%] p-1.5 rounded-md text-sm shadow-md border-l-[5px] cursor-pointer"
+                class="event absolute p-1.5 rounded-md text-sm shadow-md border-l-[5px] cursor-pointer overflow-hidden"
                 :style="{ ...getEventStyle(event, day.date)}"
                 :class="[colorStore.getBorderColor(event.calendarColor), colorStore.getBackgroundLightColor(event.calendarColor)]"
             >
-              <h2 class="font-semibold">{{ event.summary }}</h2>
+              <h2 class="font-semibold truncate whitespace-nowrap">{{ event.summary }}</h2>
                             <p class="text-gray-500"> {{event.formattedDuration}}</p>
             </div>
           </div>
@@ -90,8 +90,6 @@
   </div>
 
   <Modal v-show="showModal" :toggleModal="toggleModal" :showModal="showModal" :selectedEvent="selectedEvent.value"/>
-  <button @click="toggleModal">Modal</button>
-
 
 </template>
 
@@ -106,11 +104,11 @@ import {
   calculateWeeksBetween,
   calculateMonthsBetween,
   calculateYearsBetween,
-  formatDate, formatDuration,
+  formatDateToISO, formatDuration,
   getDaysInYear,
   getNumValueForICSDay, getNumValueForJSDay, isSameDate, subtractOneDay, extractDate
 } from "@/utils/dateUtils.js";
-import Modal from "@/components/Modal.vue";
+import Modal from "@/components/EventDetailsModal.vue";
 
 const colorStore = useColorStore();
 const calendarStore = useCalendarStore();
@@ -122,8 +120,7 @@ const toggleModal = (event) => {
 
   if(event) {
     selectedEvent.value = event;
-  } else {
-    selectedEvent.value = {}
+    console.log(event)
   }
 }
 
@@ -142,6 +139,7 @@ const normalizedEvents = computed(() => {
 })
 
 let now = ref(new Date());
+let weekSwitch = ref(new Date());
 const todayISO = ref(format(now.value, "yyyy-MM-dd"))
 
 onMounted(() => {
@@ -187,16 +185,16 @@ const hours = Array.from({length: 24}, (_, i) => ({
 
 const weekDays = computed(() => {
   return Array.from({length: 7}, (_, i) => {
-    const date = addDays(startOfWeek(now.value, {weekStartsOn: 1}), i);
+    const date = addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), i);
     return {date: format(date, "yyyy-MM-dd"), label: format(date, "dd EEEE")};
   });
 });
 
 const prevWeek = () => {
-  now.value = addDays(now.value, -7);
+  weekSwitch.value = addDays(weekSwitch.value, -7);
 };
 const nextWeek = () => {
-  now.value = addDays(now.value, 7);
+  weekSwitch.value = addDays(weekSwitch.value, 7);
 };
 
 const getMultiDayEvents = (date) => {
@@ -418,7 +416,7 @@ const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
         newStartDate.setDate(newStartDate.getDate() + (i * 7 * interval) + daysBetween)
 
 
-        if (formatDate(newStartDate) > event.startDate) { // Saving the weekly events after the start date
+        if (formatDateToISO(newStartDate) > event.startDate) { // Saving the weekly events after the start date
           // if(daysBetween >= 0 || i !== 0) {
           normalizedEvents.push({
             ...event,
@@ -485,19 +483,32 @@ const getWeekRowTracker = (() => {
     return weekTracker.eventRows[event.uid];
   };
 })();
-
-//TODO: Refactor
-const getEventStyle = (event, targetDayDate, color) => {
+const getEventStyle = (event, targetDayDate) => {
   if (event.startDate === event.endDate) {
-    const startHour = event.startTime;
-    const duration = event.endTime - event.startTime;
+    const overlappingEvents = getSingleDayEvents(targetDayDate).filter(e => {
+      return e.startTime < event.endTime && e.endTime > event.startTime
+    })
+
+    overlappingEvents.sort((a, b) => a.startTime - b.startTime);
+
+    const index = overlappingEvents.findIndex(e => e.uid === event.uid);
+
+    let baseWidth = 90;
+    let width = baseWidth / (2 ** index);
+    let left = 5;
+
+    for (let i = 0; i < index; i++) {
+      left += baseWidth / (2 ** (i + 1));
+    }
 
     return {
-      top: `${startHour * 50}px`,
-      height: `${duration * 50}px`,
-      left: `5%`,
+      top: `${event.startTime * 50}px`,
+      height: `${(event.endTime - event.startTime) * 50}px`,
+      width: `${width}%`,
+      left: `${left}%`,
+      zIndex: event.startTime,
     };
-  } else {
+  } else { //TODO: Refactor
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);
     endDate.setDate(endDate.getDate() - 1) // 31 March 12:00 AM to 01 April 12:00AM is only 1 day (24hrs)
@@ -536,10 +547,10 @@ const getEventStyle = (event, targetDayDate, color) => {
         return {
           ...baseStyle,
           ...getGridStyle,
-          borderLeft: `2px solid ${color}`,
+          borderLeft: `2px solid ${event.calendarColor}`,
           borderTopLeftRadius: '5px',
           borderBottomLeftRadius: '5px',
-          borderRight: `2px solid ${color}`,
+          borderRight: `2px solid ${event.calendarColor}`,
           borderTopRightRadius: '5px',
           borderBottomRightRadius: '5px',
           left: '5%',
