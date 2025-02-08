@@ -75,6 +75,20 @@ export const getNumValueForJSDay = (JSDay) => {
     }
 }
 
+export const getFullDay = (short) => {
+    const daysMap = {
+        "MO": "Monday",
+        "TU": "Tuesday",
+        "WE": "Wednesday",
+        "TH": "Thursday",
+        "FR": "Friday",
+        "SA": "Saturday",
+        "SU": "Sunday"
+    };
+
+    return daysMap[short] || "Invalid day";
+}
+
 export const extractDate = (dateTimeObj) => {
     const localDateTime = dateTimeObj.toLocaleString(undefined, {
         year: 'numeric',
@@ -117,8 +131,37 @@ export const isSameDate = (date1, date2) => {
     );
 }
 
-export const formatDate = (date) => {
+export const formatDateToISO = (date) => {
     return new Date(date).toLocaleString('en-CA').split(",")[0];
+}
+
+export const formatDateTimeToString = (date) => {
+    return new Date(date).toLocaleString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
+}
+
+export const formatDateToString = (date) => {
+    return new Date(date).toLocaleString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+export const formatDateToStringShort = (date) => {
+    return new Date(date).toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
 }
 
 export const formatDuration = (startDateTime, endDateTime) => {
