@@ -538,7 +538,11 @@ const getEventStyle = (event, targetDayDate) => {
   } else { //TODO: Refactor
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);
-    endDate.setDate(endDate.getDate() - 1) // 31 March 12:00 AM to 01 April 12:00AM is only 1 day (24hrs)
+
+    if(event.endTime === 0) {
+      endDate.setDate(endDate.getDate() - 1) // 01 April 12:00 AM to 02 April 12:00AM is only 1 day (24hrs)
+    }
+
 
     const targetDate = new Date(targetDayDate);
 
