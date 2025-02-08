@@ -1,8 +1,8 @@
-<template>
-  <h1 class="text-4xl font-bold text-[#31776c] mb-8">Guides</h1>
+<template >
 
   <div class="min-h-screen ">
-    <div class="">
+    <div class="flex-1 p-6 pt-20 md:p-24">
+      <h1 class="text-4xl font-bold text-[#31776c] mb-8">Guides</h1>
 
       <Tabs default-value="Google" class="mb-8 flex flex-col">
         <TabsList class="self-start p-0">

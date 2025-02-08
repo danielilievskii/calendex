@@ -1,5 +1,5 @@
 <template>
-    <section class="p-24">
+    <section class="">
       <Faq/>
     </section>
   
