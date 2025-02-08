@@ -25,6 +25,24 @@ export const useCalendarStore = defineStore('calendar', {
             this.calendars.push(newCalendar);
             this.saveToLocalStorage();
         },
+        updateCalendar(calendar, id) {
+            const index = this.calendars.findIndex(calendar => calendar.uid === id);
+            if (index !== -1) {
+                this.calendars[index] = {
+                    uid: calendar.uid,
+                    name: calendar.name,
+                    color: calendar.color || '#000000',
+                    type: calendar.type,
+                    selected: false,
+                    url: calendar.url,
+                    events: toRaw(calendar.events).map(event => ({
+                        ...toRaw(event),
+                        duration: event.duration?.toString() || event.duration,
+                    }))
+                };
+                this.saveToLocalStorage();
+            }
+        },
         updateFilteredEvents(selectedCalendars) {
             this.calendars.forEach(cal => {
                 cal.selected = selectedCalendars.includes(cal.uid);
@@ -61,6 +79,8 @@ export const useCalendarStore = defineStore('calendar', {
             console.log("Saving to localStorage:", this.calendars);
             localStorage.setItem('calendars', JSON.stringify(this.calendars));
         },
-
+        getCalendarById(id) {
+            return this.calendars.find(calendar => calendar.uid === id);
+        }
     },
 });

@@ -99,7 +99,9 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem @click="editCalendar(calendar.uid)">Edit</DropdownMenuItem>
+                <RouterLink :to="{path:'/calendar-import', query:{id: calendar.uid}}"> 
+                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                </RouterLink>
                 <DropdownMenuSeparator/>
                 <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
@@ -157,6 +159,7 @@ import {MoreVerticalIcon} from 'lucide-vue-next'
 
 import {ref, watch} from "vue";
 import {getLocalTimeZone, today} from '@internationalized/date'
+import router from "@/router";
 
 
 const sidebarStore = useSidebarStore();
@@ -183,10 +186,12 @@ const deleteCalendar = (uid: string) => {
 };
 
 const editCalendar = (id: string) => {
-  const newName = prompt("Enter new calendar name:");
-  if (newName) {
-    calendarStore.editCalendarName(id, newName);
-  }
+  // const newName = prompt("Enter new calendar name:");
+  // if (newName) {
+  //   calendarStore.editCalendarName(id, newName);
+  // }
+
+  router.push({path: '/calendar-import', query: {id}});
 };
 
 </script>
