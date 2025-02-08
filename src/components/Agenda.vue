@@ -45,7 +45,7 @@
               {{ event.summary }}
             </TableCell>
             <TableCell class="w-1/6 px-4 py-2">{{ event.location || "No location" }}</TableCell>
-            <TableCell class="w-1/6 px-4 py-2">{{ formatDate(event.startDate) }}</TableCell>
+            <TableCell class="w-1/6 px-4 py-2">{{ formatDateTimeToString(event.startDateTime) }}</TableCell>
             <TableCell class="w-1/6 px-4 py-2 pl-8">
                 <Badge class="bg-[#52B788]">{{ formatDuration(event.duration) || 'Unknown' }}</Badge>
             </TableCell>
@@ -128,6 +128,7 @@ import {
 } from 'lucide-vue-next'
 import { useCalendarStore } from '@/stores/calendar'
 import { useColorStore } from '@/stores/colors';
+import {formatDateTimeToString} from "../utils/dateUtils.js";
 
 const calendarStore = useCalendarStore()
 const colorStore = useColorStore()
@@ -166,17 +167,6 @@ const sortedEvents = computed(() => {
   return events.slice(start, end)
 })
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
 
 //TODO: fix duration since we are now saving pure string
 const formatDuration = (duration: any) => {
