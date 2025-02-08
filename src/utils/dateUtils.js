@@ -89,8 +89,27 @@ export const getFullDay = (short) => {
     return daysMap[short] || "Invalid day";
 }
 
+
 export const extractDate = (dateTimeObj) => {
     const localDateTime = dateTimeObj.toLocaleString(undefined, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        millisecond: '3-digit',
+        hour12: false,
+        timeZoneName: 'short'
+    }).replace(/,/g, '').replace(' ', 'T');
+
+    let date = localDateTime.split("T")[0].split("/")
+
+    return date[2] + '-' + date[0] + '-' + date[1] ;
+};
+
+export const extractStringDate = (dateTime) => {
+    const localDateTime = new Date(dateTime).toLocaleString(undefined, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -132,7 +151,7 @@ export const isSameDate = (date1, date2) => {
 }
 
 export const formatDateToISO = (date) => {
-    return new Date(date).toLocaleString('en-CA').split(",")[0];
+    return new Date(date).toLocaleString(undefined).split(",")[0];
 }
 
 export const formatDateTimeToString = (date) => {

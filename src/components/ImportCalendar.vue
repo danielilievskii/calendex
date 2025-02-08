@@ -98,7 +98,7 @@ import axios from 'axios'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
-import { formatDuration, extractDate, extractTime } from  "@/utils/dateUtils.js"
+import { formatDuration, extractDate, extractTime, extractStringDate} from  "@/utils/dateUtils.js"
 
 const calendarStore = useCalendarStore();
 
@@ -267,6 +267,7 @@ const extractEvents = (icsContent: string) => {
       endTime: extractTime(icalEvent.endDate.toJSDate()),
       freq: icalEvent.component.jCal[1][2][3].freq ?? null,
       until: icalEvent.component.jCal[1][2][3].until ?? null,
+      untilISO: icalEvent.component.jCal[1][2][3].until ? extractStringDate(icalEvent.component.jCal[1][2][3].until) : null,
       count: icalEvent.component.jCal[1][2][3].count ?? null,
       interval: icalEvent.component.jCal[1][2][3].interval ?? null,
       wkst: icalEvent.component.jCal[1][2][3].wkst ?? null,

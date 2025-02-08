@@ -21,15 +21,15 @@
       </div>
     </div>
 
-<!--    Multi-day events (more than 24 hours) -->
+    <!--    Multi-day events (more than 24 hours) -->
     <div class="calendar-container-head flex">
       <div class="w-[65px] bg-[#fff]"></div>
 
       <div class="calendar-week-day-grid grid grid-cols-7 flex-1"
       >
         <template v-for="day in weekDays" :key="day.date"
-             class="calendar-week-day bg-white"
-             :style="{
+                  class="calendar-week-day bg-white"
+                  :style="{
           display: 'grid',
           gridTemplateRows: `repeat(auto-fill, 35px)`}" >
           <div
@@ -50,7 +50,7 @@
       </div>
 
     </div>
-<!--      Single-day events (less than 24 hours -->
+    <!--      Single-day events (less than 24 hours -->
     <div class="calendar-container flex rounded-md">
       <div class="time-column w-[65px] bg-[#fff] border-[#ddd] pb-4">
         <div v-for="hour in hours" :key="hour.value"
@@ -81,7 +81,7 @@
                 :class="[colorStore.getBorderColor(event.calendarColor), colorStore.getBackgroundLightColor(event.calendarColor)]"
             >
               <h2 class="font-semibold truncate whitespace-nowrap">{{ event.summary }}</h2>
-                            <p class="text-gray-500"> {{event.formattedDuration}}</p>
+              <p class="text-gray-500"> {{event.formattedDuration}}</p>
             </div>
           </div>
         </div>
@@ -150,8 +150,8 @@ onMounted(() => {
 
 // Formatted week displayed in calendar header
 const formattedWeek = computed(() => {
-  const start = format(startOfWeek(now.value, {weekStartsOn: 1}), "MMMM dd");
-  const end = format(addDays(startOfWeek(now.value, {weekStartsOn: 1}), 6), "MMMM dd");
+  const start = format(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), "MMMM dd");
+  const end = format(addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), 6), "MMMM dd");
   return `${start} - ${end}`;
 });
 
@@ -278,13 +278,16 @@ const getSingleDayEvents = (date) => {
 
 // TODO: Refactor
 const normalizeEvents = (rawEvents) => {
+  console.log('RAW EVENTS: ')
+  console.log(rawEvents)
+
   let normalizedEvents = []
   rawEvents.forEach(event => {
     if (event.startDate === event.endDate && !event.freq) {
       normalizedEvents.push(event)
     } else {
       if (!event.freq) {
-       handleMultiDayEvents(normalizedEvents, event)
+        handleMultiDayEvents(normalizedEvents, event)
 
       } else {
         switch (event.freq) {
@@ -315,10 +318,19 @@ const normalizeEvents = (rawEvents) => {
           case 'WEEKLY': { // event.wkst default: 1 -> no need for if statements
             if (event.until) { // Ends on x date:
               const weeks = calculateWeeksBetween(event.startDate, event.until) + 1
-              handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
+              if(event.wkst) {
+                handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
+              } else {
+                handleWeeklyEvents(normalizedEvents, event, weeks)
+              }
+
             } else if (event.count) { // Ends after x weeks:
               const weeks = event.count
-              handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
+              if(event.wkst) {
+                handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
+              } else {
+                handleWeeklyEvents(normalizedEvents, event, weeks)
+              }
             } else {
               normalizedEvents.push({
                 ...event,
@@ -385,14 +397,19 @@ const handleDailyEvents = (normalizedEvents, event, days, interval = 1) => {
       const newStartDate = new Date(event.startDate)
       newStartDate.setDate(newStartDate.getDate() + (i * interval))
 
-      normalizedEvents.push({
-        ...event,
-        uid: event.uid + '' + i,
-        startDate: format(newStartDate, "yyyy-MM-dd"),
-        endDate: format(newStartDate, "yyyy-MM-dd"),
-        multiDay: false,
-        freq: null
-      })
+      const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
+
+      if(!event.until || newStartDateISO <= event.untilISO) {
+        normalizedEvents.push({
+          ...event,
+          uid: event.uid + '' + i,
+          startDate: format(newStartDate, "yyyy-MM-dd"),
+          endDate: format(newStartDate, "yyyy-MM-dd"),
+          multiDay: false,
+          freq: null
+        })
+      }
+
     }
   } else {  // TODO: Scenario when the duration is more than 24hours, but happens daily
 
@@ -400,7 +417,10 @@ const handleDailyEvents = (normalizedEvents, event, days, interval = 1) => {
 }
 const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
 
+
   if (event.startDate === event.endDate) { // Destruct event in multiple weeks
+
+
     for (let i = 0; i < weeks; i++) {
 
       if (typeof event.byDay == 'string') {
@@ -415,18 +435,20 @@ const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
         let daysBetween = eventWeekDay - startWeekDay
         newStartDate.setDate(newStartDate.getDate() + (i * 7 * interval) + daysBetween)
 
+        const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
 
-        if (formatDateToISO(newStartDate) > event.startDate) { // Saving the weekly events after the start date
-          // if(daysBetween >= 0 || i !== 0) {
+        if (newStartDateISO >= event.startDate && (!event.until || newStartDateISO <= event.untilISO)) {
           normalizedEvents.push({
             ...event,
             uid: event.uid + '' + i,
-            startDate: format(newStartDate, "yyyy-MM-dd"),
-            endDate: format(newStartDate, "yyyy-MM-dd"),
+            startDate: newStartDateISO,
+            endDate: newStartDateISO,
             multiDay: false,
             freq: null
-          })
+          });
         }
+
+
       }
     }
 
@@ -445,14 +467,19 @@ const handleYearlyEvents = (normalizedEvents, event, years, interval = 1) => {
 
       newStartDate.setDate(newStartDate.getDate() + (i * daysInYear * interval))
 
-      normalizedEvents.push({
-        ...event,
-        uid: event.uid + '' + i,
-        startDate: format(newStartDate, "yyyy-MM-dd"),
-        endDate: format(newStartDate, "yyyy-MM-dd"),
-        multiDay: false,
-        freq: null
-      })
+      const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
+
+      if(!event.until || newStartDateISO <= event.untilISO) {
+        normalizedEvents.push({
+          ...event,
+          uid: event.uid + '' + i,
+          startDate: format(newStartDate, "yyyy-MM-dd"),
+          endDate: format(newStartDate, "yyyy-MM-dd"),
+          multiDay: false,
+          freq: null
+        })
+      }
+
     }
   } else {  // TODO: Scenario when the duration is more than 24hours, but happens yearly
 
@@ -565,7 +592,7 @@ const getEventStyle = (event, targetDayDate) => {
           ...baseStyle,
           ...getGridStyle,
           // background: 'green',
-          borderLeft: `2px solid ${color}`,
+          borderLeft: `2px solid ${event.calendarColor}`,
           borderTopLeftRadius: '5px',
           borderBottomLeftRadius: '5px',
           left: '5%',
@@ -576,7 +603,7 @@ const getEventStyle = (event, targetDayDate) => {
         return {
           ...baseStyle,
           ...getGridStyle,
-          borderRight: `2px solid ${color}`,
+          borderRight: `2px solid ${event.calendarColor}`,
           borderTopRightRadius: '5px',
           borderBottomRightRadius: '5px',
           right: '5%',
