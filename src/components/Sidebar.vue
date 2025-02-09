@@ -103,7 +103,7 @@
                   <DropdownMenuItem>Edit</DropdownMenuItem>
                 </RouterLink>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid)">Delete</DropdownMenuItem>
+                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid, calendar.name)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -150,6 +150,7 @@ import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue
 import DropdownMenuSeparator from '@/components/ui/dropdown-menu/DropdownMenuSeparator.vue'
 import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
 import Button from '@/components/ui/button/Button.vue'
+import { useToast } from '@/components/ui/toast/use-toast'
 
 import {useSidebarStore} from '@/stores/sidebar';
 import {useCalendarStore} from '@/stores/calendar';
@@ -165,6 +166,8 @@ import router from "@/router";
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
 const colorStore = useColorStore();
+
+const { toast } = useToast()
 
 const selectedCalendars = computed(() =>
     calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid)
@@ -186,8 +189,13 @@ const selectCalendar = (uid: string) => {
     calendarStore.selectCalendar(uid)
 }
 
-const deleteCalendar = (uid: string) => {
-  // selectedCalendars.value = selectedCalendars.value.filter(calendar => calendar.uid !== uid);
+const deleteCalendar = (uid: string, name) => {
+
+  toast({
+    title: `The calendar has been deleted successfully. `,
+    variant: 'success'
+  });
+
   calendarStore.deleteCalendar(uid);
 };
 

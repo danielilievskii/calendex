@@ -2,7 +2,7 @@
   <div class="max-w-2xl mx-auto p-4 sm:p-8 bg-white rounded-md border border-gray-200 shadow-lg w-full sm:w-auto">
     <div class="mb-6 flex flex-col sm:flex-row gap-4">
       <div class="w-full sm:w-1/2">
-        <label for="name" class="block text-sm font-medium text-gray-700">Calendar name</label>
+        <label for="name" class="block font-medium text-gray-700">Calendar name</label>
         <input v-model="calendarName" type="text" name="name" id="name" 
         class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm
         focus:border-[#52b788] focus:ring-1 focus:ring-[#52b788] focus:outline-none
@@ -12,7 +12,7 @@
       </div>
 
       <div class="w-full sm:w-1/2 ">
-        <label for="color" class="block text-sm font-medium text-gray-700">Choose color</label>
+        <label for="color" class="block font-medium text-gray-700">Calendar color</label>
         <div class="mt-1 grid grid-cols-3 sm:grid-cols-9 gap-2 pt-1 pr-1">
           <button
             v-for="(colorClass, colorName) in colorMap"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="mb-6">
-      <label class="block text-sm font-medium text-gray-700">Calendar type</label>
+      <label class="block font-medium text-gray-700">Calendar type</label>
       <RadioGroup v-model="calendarType" default-value="google" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div v-for="option in radioOptions" :key="option.value" @click="calendarType = option.value" class="relative">
           <RadioGroupItem :id="option.value" :value="option.value" class="peer sr-only" />
@@ -49,22 +49,26 @@
     </div>
 
     <div class="mb-6">
-      <span class="block text-sm font-medium text-gray-700">Import method</span>
+      <span class="block font-medium text-gray-700">Import method</span>
       <div class="mt-2 flex flex-col sm:flex-row gap-3">
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
         :class="importMethod === 'url' ? 'green-btn' : 'gray-btn'"
-        @click="importMethod = 'url'">Use URL</button>
+        @click="importMethod = 'url'">Use ICS URL</button>
 
         <button type="button" class="px-4 py-2 rounded-md border text-sm font-medium" 
         :class="importMethod === 'file' ? 'green-btn' : 'gray-btn'"
-        @click="importMethod = 'file'">Use downloaded file</button>
+        @click="importMethod = 'file'">Use ICS file</button>
 
       </div>
     </div>
 
     <div v-if="importMethod === 'url'" class="mb-6">
-      <label for="icsUrl" class="block text-sm font-medium text-gray-700">Calendar URL</label>
+      <div class="flex justify-between">
+        <label for="icsUrl" class="block font-medium text-gray-700">Calendar ICS URL</label>
+        <router-link to="/guides" class="text-gray-400 hover:underline">Need help finding it?</router-link>
+      </div>
+
       <input v-model="calendarUrl" type="text" id="icsUrl" 
       class="mt-1 block w-full rounded-md border border-gray-400 shadow-sm
       focus:border-[#52b788] focus:ring-1 focus:ring-[#52b788] focus:outline-none sm:text-sm p-2"
@@ -72,15 +76,17 @@
 
        
        <span v-if="errCalUrl" class="text-red-500">Please enter a valid URL</span><br>
-      <router-link to="/guides" class="text-blue-500 hover:underline text-sm">Need help finding your URL?</router-link>
+
     </div>
 
     <div v-if="importMethod === 'file'" class="mb-6">
-      <label for="iscFile" class="block text-sm font-medium text-gray-700">Upload downloaded ICS File</label>
+      <label for="iscFile" class="block font-medium text-gray-700">Calendar ICS file</label>
       <input ref="calendarFile" type="file" id="iscFile" 
       class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
       file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50
       file:text-[#587acc] hover:file:bg-indigo-100 cursor-pointer" />
+
+      <span v-if="errCalFile" class="text-red-500">Please choose a valid file</span><br>
     </div>
 
     <div class="flex items-center justify-end gap-3">
@@ -98,12 +104,15 @@ import axios from 'axios'
 import { useRoute } from 'vue-router'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { useToast } from '@/components/ui/toast/use-toast'
+
 import { useCalendarStore } from '@/stores/calendar';
 import { formatDuration, extractDate, extractTime, extractStringDate} from  "@/utils/dateUtils.js"
 
 const calendarStore = useCalendarStore();
 
 const route = useRoute();
+const {toast} = useToast();
 
 const calendarName = ref('');
 const calendarType = ref('');
@@ -186,7 +195,7 @@ const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 //TODO:
 const handleSubmit = async (values: any) => {
-  
+
   errCalName.value = !calendarName.value;
   errCalColor.value = !calendarColor.value;
   errCalType.value = !calendarType.value;
@@ -208,13 +217,20 @@ const handleSubmit = async (values: any) => {
     
     let result = await handleURLDownload();
     if(!result){
-      alert('Error fetching from url')
+      toast({
+        title: 'There was an error fetching the calendar.',
+        variant: 'destructive'
+      });
       return;
     }
-    events.value = result;
+    events.value = result as [];
   } else {
     let result = await handleFileUpload()
     if(!result){
+      toast({
+        title: 'There was an error parsing the file.',
+        variant: 'destructive'
+      });
       return;
     }
     events.value = result as [];
@@ -234,12 +250,18 @@ const handleSubmit = async (values: any) => {
 
   if(id.value){
     calendarStore.editCalendar(calendar, id.value);
-    alert("Calendar updated successfully")
+    toast({
+      title: `The calendar has been updated successfully.`,
+      variant: 'success'
+    });
     return;
   }
   else{
     calendarStore.addCalendar(calendar);
-    alert("Calendar added successfully")
+    toast({
+      title: `The calendar has been added successfully.`,
+      variant: 'success'
+    });
     resetForm()
   }
 }
@@ -265,7 +287,7 @@ function generateUniqueId(name, url) {
     hash |= 0;
   }
 
-  return Math.abs(hash).toString(36); // Convert to base-36 (numbers + letters)
+  return Math.abs(hash).toString(36);
 }
 
 const extractEvents = (icsContent: string) => {
@@ -275,41 +297,6 @@ const extractEvents = (icsContent: string) => {
 
   return vevents.map(event => {
     const icalEvent = new ICAL.default.Event(event)
-    // console.log(icalEvent)
-    // console.log('Freq: ' + icalEvent.component.jCal[1][2][3].freq)
-    // // AKO ima freq, vazhat dolnite pravila - vo sprotivno samo startDate i endDate gledash i dodaj multiDay: true
-    //
-    // // ako freq e DAILY i imame ist startDate i endDate, koristime samo startDay i daily do kraj
-    // console.log('Until: ' + icalEvent.component.jCal[1][2][3].until)
-    //
-    // // ako freq e DAILY i imame razl startDate i endDate - nema until i gi koristime startDate i endDate
-    //
-    // // ako imame interval kaj daily, toa znachi na tolku dena da se pojavuva - soodvetno za weekly, monthly itn
-    // console.log('Interval: ' + icalEvent.component.jCal[1][2][3].interval)
-    //
-    // // ako imame count kaj daily, toa znachi tolku dena se pojavuva / occurences
-    // console.log('Count: ' + icalEvent.component.jCal[1][2][3].count)
-    //
-    // // ako freq e WEEKLY imame byday - ili SU ili array od ['FR', 'MO', 'TH', 'TU', 'WE']
-    // console.log('byDay: ' + icalEvent.component.jCal[1][2][3].byday)
-    //
-    //
-    // console.log('byMonthDay: ' + icalEvent.component.jCal[1][2][3].bymonthday)
-    //
-    // console.log('uid: ' + icalEvent.uid)
-
-
-    // ako freq e MONTHLY imame byday:
-    //4SU za fourth sunday od mesecot
-    //1SU za prv sunday od mesecot
-    //-1SU za posleden sunday od mesecot
-
-    //bymonthday: 4
-
-    //ako freq e YEARLY gleadme samo startDate i endDate
-    // nemame nishto
-
-
 
     return {
       uid: icalEvent.uid,
@@ -350,7 +337,6 @@ const handleFileUpload = () => {
       reader.onload = () => {
         const icsContent = reader.result as string;
         let results = extractEvents(icsContent);
-        // console.log('Vo handleFileUpload:', results);
         resolve(results ?? []);
       };
       reader.onerror = () => reject(new Error("File reading failed"));
