@@ -531,7 +531,7 @@ const getEventStyle = (event, targetDayDate) => {
       height: `${(event.endTime - event.startTime) * 50}px`,
       width: `${width}%`,
       left: `${left}%`,
-      zIndex: event.startTime,
+      zIndex: Math.round(event.startTime),
     };
   } else { //TODO: Refactor
     const startDate = new Date(event.startDate);
