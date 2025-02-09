@@ -12,7 +12,7 @@ export const useCalendarStore = defineStore('calendar', {
                 name: calendar.name,
                 color: calendar.color || '#000000',
                 type: calendar.type,
-                selected: false,
+                selected: calendar.selected,
                 url: calendar.url,
                 events: toRaw(calendar.events).map(event => ({
                     ...toRaw(event),
@@ -25,7 +25,7 @@ export const useCalendarStore = defineStore('calendar', {
             this.calendars.push(newCalendar);
             this.saveToLocalStorage();
         },
-        updateCalendar(calendar, id) {
+        editCalendar(calendar, id) {
             const index = this.calendars.findIndex(calendar => calendar.uid === id);
             if (index !== -1) {
                 this.calendars[index] = {
@@ -33,7 +33,7 @@ export const useCalendarStore = defineStore('calendar', {
                     name: calendar.name,
                     color: calendar.color || '#000000',
                     type: calendar.type,
-                    selected: false,
+                    selected: calendar.selected,
                     url: calendar.url,
                     events: toRaw(calendar.events).map(event => ({
                         ...toRaw(event),
@@ -41,7 +41,20 @@ export const useCalendarStore = defineStore('calendar', {
                     }))
                 };
                 this.saveToLocalStorage();
+
             }
+        },
+        deleteCalendar(uid) {
+            this.calendars = this.calendars.filter(calendar => calendar.uid !== uid);
+            this.saveToLocalStorage();
+        },
+        selectCalendar(uid) {
+            const index = this.calendars.findIndex(calendar => calendar.uid === uid);
+            if(index !== -1) {
+                this.calendars[index].selected = !this.calendars[index].selected;
+                this.saveToLocalStorage();
+            }
+
         },
         updateFilteredEvents(selectedCalendars) {
             this.calendars.forEach(cal => {
@@ -64,17 +77,8 @@ export const useCalendarStore = defineStore('calendar', {
                 this.filteredEvents = []
             }
         },
-        deleteCalendar(uid) {
-            this.calendars = this.calendars.filter(calendar => calendar.uid !== uid);
-            this.saveToLocalStorage();
-            },
-        editCalendarName(id, newName) {
-            const calendar = this.calendars.find(calendar => calendar.uid === id);
-            if (calendar) {
-                calendar.name = newName;
-                this.saveToLocalStorage();
-            }
-        },
+
+
         saveToLocalStorage() {
             console.log("Saving to localStorage:", this.calendars);
             localStorage.setItem('calendars', JSON.stringify(this.calendars));

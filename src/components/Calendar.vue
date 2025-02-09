@@ -131,8 +131,6 @@ let events = computed(() => {
   return calendarStore.filteredEvents
 })
 
-// console.log(calendarStore.filteredEvents)
-
 
 const normalizedEvents = computed(() => {
   return normalizeEvents(events.value);
@@ -565,7 +563,7 @@ const getEventStyle = (event, targetDayDate) => {
           ...baseStyle,
           ...getGridStyle,
           // background: 'green',
-          borderLeft: `2px solid ${color}`,
+          borderLeft: `2px solid ${event.calendarColor}`,
           borderTopLeftRadius: '5px',
           borderBottomLeftRadius: '5px',
           left: '5%',
@@ -576,7 +574,7 @@ const getEventStyle = (event, targetDayDate) => {
         return {
           ...baseStyle,
           ...getGridStyle,
-          borderRight: `2px solid ${color}`,
+          borderRight: `2px solid ${event.calendarColor}`,
           borderTopRightRadius: '5px',
           borderBottomRightRadius: '5px',
           right: '5%',

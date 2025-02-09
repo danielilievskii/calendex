@@ -111,6 +111,7 @@ const importMethod = ref<'url' | 'file'>('url');
 const calendarColor = ref('');
 const calendarUrl = ref('');
 const calendarFile = ref(null);
+const calendarSelected = ref(false);
 
 const calendar = ref(null); 
 const id = ref(null);
@@ -125,11 +126,13 @@ const fetchCalendarData = (calendarId) => {
             calendarType.value = calendar.value.type ?? '';
             calendarColor.value = calendar.value.color ?? '';
             calendarUrl.value = calendar.value.url ?? '';
+            calendarSelected.value = calendar.value.selected;
         } else {
             calendarName.value = '';
             calendarType.value = '';
             calendarColor.value = '';
             calendarUrl.value = '';
+            calendarSelected.value = false
         }
     } else {
         console.log('No calendar ID provided.');
@@ -137,6 +140,7 @@ const fetchCalendarData = (calendarId) => {
         calendarType.value = '';
         calendarColor.value = '';
         calendarUrl.value = '';
+        calendarSelected.value = false
         calendar.value = null;
     }
 };
@@ -221,6 +225,7 @@ const handleSubmit = async (values: any) => {
     name: calendarName.value,
     color: calendarColor.value,
     type: calendarType.value,
+    selected: calendarSelected.value,
     url: calendarUrl.value,
     events: events.value,
   }
@@ -228,7 +233,7 @@ const handleSubmit = async (values: any) => {
   console.log(events.value)
 
   if(id.value){
-    calendarStore.updateCalendar(calendar, id.value);
+    calendarStore.editCalendar(calendar, id.value);
     alert("Calendar updated successfully")
     return;
   }
