@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen">
-    <div class="flex-1 p-6 pt-20 md:p-24">
+    <div class="">
       <h1 class="text-4xl font-bold text-[#31776c] mb-8">Guides</h1>
       <Tabs v-model="selectedTab" class="mb-8 flex flex-col">
         <TabsList class="self-start p-0">
@@ -18,7 +18,7 @@
         </TabsList>
         <div class="bg-white backdrop-blur-sm rounded-b-xl rounded-r-xl shadow-lg p-6 sm:p-8 mt-0 flex justify-center">
           <TabsContent v-for="tab in tabs" :key="tab.path" :value="tab.path">
-            <video class="h-auto w-auto rounded-lg" controls>
+            <video class="rounded-lg" controls>
               <source :src="selectedVideo" type="video/mp4" />
             </video>
           </TabsContent>

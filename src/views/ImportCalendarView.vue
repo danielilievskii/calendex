@@ -1,5 +1,5 @@
 <template>
-  <section class="p-24">
+  <section class="md:px-24 md:py-24 p-6 pt-20">
     <ImportCalendar/>
   </section>
 
