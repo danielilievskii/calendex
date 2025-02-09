@@ -51,7 +51,7 @@
           <span class="text-sm transition-transform" :class="{ '-rotate-90': !dropdownOpen }">
             <i class="bi bi-caret-down-fill"></i>
           </span>
-            <span class="text-[15px] tracking-widest font-semibold">ALL CALENDARS</span>
+            <span class="text-[15px] tracking-widest font-semibold">CALENDARS</span>
 
           </div>
         </div>
