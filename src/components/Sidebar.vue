@@ -14,7 +14,7 @@
       sidebarStore.isSidebarCollapsed ? 'w-0 lg:w-[0px]' : 'w-[300px] lg:w-[300px]']">
 
     <div class="relative left-20 top-6" v-if="!sidebarStore.isSidebarCollapsed">
-      <img src="/public/calendex.png" alt="" width="200">
+      <img src="/calendex.png" alt="" width="210">
     </div>
 
     <!-- Sidebar Content -->
