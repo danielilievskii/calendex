@@ -93,8 +93,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useCalendarStore } from '@/stores/calendar';
@@ -102,12 +103,57 @@ import { formatDuration, extractDate, extractTime, extractStringDate} from  "@/u
 
 const calendarStore = useCalendarStore();
 
-const calendarName = ref('')
-const calendarType = ref('')
-const importMethod = ref<'url' | 'file'>('url')
-const calendarColor = ref('')
-const calendarUrl = ref('')
-const calendarFile = ref<HTMLInputElement | null>(null)
+const route = useRoute();
+
+const calendarName = ref('');
+const calendarType = ref('');
+const importMethod = ref<'url' | 'file'>('url');
+const calendarColor = ref('');
+const calendarUrl = ref('');
+const calendarFile = ref(null);
+const calendarSelected = ref(false);
+
+const calendar = ref(null); 
+const id = ref(null);
+
+const fetchCalendarData = (calendarId) => {
+    if (calendarId) {
+        calendar.value = calendarStore.getCalendarById(calendarId);
+        console.log('Fetched calendar:', calendar.value);
+
+        if (calendar.value) {
+            calendarName.value = calendar.value.name ?? '';
+            calendarType.value = calendar.value.type ?? '';
+            calendarColor.value = calendar.value.color ?? '';
+            calendarUrl.value = calendar.value.url ?? '';
+            calendarSelected.value = calendar.value.selected;
+        } else {
+            calendarName.value = '';
+            calendarType.value = '';
+            calendarColor.value = '';
+            calendarUrl.value = '';
+            calendarSelected.value = false
+        }
+    } else {
+        console.log('No calendar ID provided.');
+        calendarName.value = '';
+        calendarType.value = '';
+        calendarColor.value = '';
+        calendarUrl.value = '';
+        calendarSelected.value = false
+        calendar.value = null;
+    }
+};
+
+watch(
+    () => route.query.id,
+    (newId) => {
+      console.log("route.query.id changed", newId);
+      id.value = newId
+        fetchCalendarData(newId);
+    },
+    { immediate: true }
+);
 
 let errCalName = ref(false)
 let errCalColor = ref(false)
@@ -179,15 +225,23 @@ const handleSubmit = async (values: any) => {
     name: calendarName.value,
     color: calendarColor.value,
     type: calendarType.value,
+    selected: calendarSelected.value,
     url: calendarUrl.value,
     events: events.value,
   }
 
   console.log(events.value)
 
-  calendarStore.addCalendar(calendar);
-  alert("Calendar added successfully")
-  resetForm()
+  if(id.value){
+    calendarStore.editCalendar(calendar, id.value);
+    alert("Calendar updated successfully")
+    return;
+  }
+  else{
+    calendarStore.addCalendar(calendar);
+    alert("Calendar added successfully")
+    resetForm()
+  }
 }
 
 const resetForm = () => {

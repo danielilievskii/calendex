@@ -131,8 +131,6 @@ let events = computed(() => {
   return calendarStore.filteredEvents
 })
 
-// console.log(calendarStore.filteredEvents)
-
 
 const normalizedEvents = computed(() => {
   return normalizeEvents(events.value);

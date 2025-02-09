@@ -72,7 +72,7 @@
         >
           <div class="flex items-center">
             <div class="relative h-5 w-5">
-              <input type="checkbox" :value="calendar.uid" v-model="selectedCalendars"
+              <input type="checkbox" :value="calendar.uid" @click="selectCalendar(calendar.uid)"
                      class="h-5 w-5 rounded-md appearance-none border-2 cursor-pointer transition-all duration-150 ease-in-out"
                      :class="[selectedCalendars.includes(calendar.uid) ? colorStore.getBackgroundColor(calendar.color) : 'bg-white',
                             colorStore.getBorderColor(calendar.color)
@@ -99,7 +99,9 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem @click="editCalendar(calendar.uid)">Edit</DropdownMenuItem>
+                <RouterLink :to="{path:'/calendar-import', query:{id: calendar.uid}}">
+                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                </RouterLink>
                 <DropdownMenuSeparator/>
                 <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
@@ -155,15 +157,18 @@ import {useColorStore} from '@/stores/colors';
 
 import {MoreVerticalIcon} from 'lucide-vue-next'
 
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {getLocalTimeZone, today} from '@internationalized/date'
+import router from "@/router";
 
 
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
 const colorStore = useColorStore();
 
-const selectedCalendars = ref(calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid));
+const selectedCalendars = computed(() =>
+    calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid)
+);
 
 watch(selectedCalendars, (newVal) => {
   calendarStore.updateFilteredEvents(newVal)
@@ -177,17 +182,15 @@ function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;
 }
 
+const selectCalendar = (uid: string) => {
+    calendarStore.selectCalendar(uid)
+}
+
 const deleteCalendar = (uid: string) => {
-  selectedCalendars.value = selectedCalendars.value.filter(calendar => calendar.uid !== uid);
+  // selectedCalendars.value = selectedCalendars.value.filter(calendar => calendar.uid !== uid);
   calendarStore.deleteCalendar(uid);
 };
 
-const editCalendar = (id: string) => {
-  const newName = prompt("Enter new calendar name:");
-  if (newName) {
-    calendarStore.editCalendarName(id, newName);
-  }
-};
 
 </script>
 
