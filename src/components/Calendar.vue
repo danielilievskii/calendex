@@ -1,4 +1,5 @@
 <template>
+
   <h1 class="text-4xl font-bold text-[#31776c] mb-8">Calendar</h1>
 
   <div class="calendar rounded-lg m-auto w-full bg-[#fff] shadow-lg">
@@ -51,7 +52,7 @@
 
     </div>
     <!--      Single-day events (less than 24 hours -->
-    <div class="calendar-container flex rounded-md">
+    <div ref="calendarContainerRef" class="calendar-container flex rounded-md">
       <div class="time-column w-[65px] bg-[#fff] border-[#ddd] pb-4">
         <div v-for="hour in hours" :key="hour.value"
              class="time-slot flex items-center justify-center text-sm h-[50px]">
@@ -97,7 +98,7 @@
 import {useColorStore} from '@/stores/colors';
 import {useCalendarStore} from '@/stores/calendar';
 
-import {ref, computed, onMounted, reactive} from "vue";
+import {ref, computed, onMounted, reactive, nextTick} from "vue";
 import {format, addDays, startOfWeek} from "date-fns";
 import {
   calculateDaysBetween,
@@ -169,12 +170,30 @@ const formattedCurrentTime = computed(() => {
   return `${currentHour.toString()}:${currentMinutes.toString().padStart(2, "0")} ${suffix}`;
 })
 
+const calendarContainerRef = ref(null);
+
 const currentTimeStyle = computed(() => {
   const currentHour = now.value.getHours();
   const currentMinutes = now.value.getMinutes();
-  let position = (currentHour * 60 + currentMinutes) / (24 * 60) * 100;
-  return {top: `${position}%`}
+  const position = (currentHour * 50) + (currentMinutes * (50 / 60));
+
+  return { top: `${position}px` };
 })
+
+const scrollToCurrentTime = () => {
+  if (calendarContainerRef.value) {
+    const currentHour = now.value.getHours();
+    const currentMinutes = now.value.getMinutes();
+    const scrollPosition = (currentHour * 50) + (currentMinutes * (50 / 60)) - 100;
+    calendarContainerRef.value.scrollTop = scrollPosition;
+  }
+};
+
+onMounted(() => {
+  nextTick(() => {
+    scrollToCurrentTime();
+  });
+});
 
 const hours = Array.from({length: 24}, (_, i) => ({
   value: i,
@@ -243,8 +262,13 @@ const getSingleDayEvents = (date) => {
               }
 
             }
+            break
           }
           case 'MONTHLY': {
+            if(date >= event.startDate) {
+                // Scenario when the event has no ending, but happens monthly
+            }
+            break;
 
           }
           case 'YEARLY': {
@@ -340,9 +364,19 @@ const normalizeEvents = (rawEvents) => {
           case 'MONTHLY': {
             if(event.until) {
               const months = calculateMonthsBetween(event.startDate, event.until)
+              if (event.interval) {
+                handleMonthlyEvents(normalizedEvents, event, months, event.interval)
+              } else {
+                handleMonthlyEvents(normalizedEvents, event, months)
+              }
 
             } else if (event.count) {
-
+              const months = event.count
+              if (event.interval) {
+                handleMonthlyEvents(normalizedEvents, event, months, event.interval)
+              } else {
+                handleMonthlyEvents(normalizedEvents, event, months)
+              }
             } else {
               normalizedEvents.push({
                 ...event,
@@ -415,9 +449,7 @@ const handleDailyEvents = (normalizedEvents, event, days, interval = 1) => {
 }
 const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
 
-
   if (event.startDate === event.endDate) { // Destruct event in multiple weeks
-
 
     for (let i = 0; i < weeks; i++) {
 
@@ -454,6 +486,76 @@ const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
 
   }
 }
+
+const handleMonthlyEvents = (normalizedEvents, event, months, interval = 1) => {
+
+  if (event.startDate === event.endDate) { // Handle single-day monthly recurring events
+    const daysMap = {
+      SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6
+    };
+
+    for (let i = 0; i < months; i++) {
+      const newStartDate = new Date(event.startDate);
+
+      if (typeof event.byDay == 'string') { // Handle events occurring on specific weekdays (e.g., "1SU" for first Sunday)
+        const match = event.byDay.match(/^(-?\d+)([A-Z]{2})$/);
+        if (match) {
+          const weekNumber = parseInt(match[1], 10); // Extract week number (e.g., 1, 2, -1)
+          const weekDayStr = match[2]; // Extract weekday string (e.g., "SU", "MO")
+
+          const targetDay = daysMap[weekDayStr]; // Convert weekday string to numeric day (0-6)
+          newStartDate.setMonth(newStartDate.getMonth() + (i * interval)); // Move to the correct month
+
+          if (weekNumber > 0) { // Handling positive week numbers (e.g., "2MO" = second Monday)
+            newStartDate.setDate(1); // Start from the first day of the month
+
+            let count = 0;
+            while (count < weekNumber) {
+              if (newStartDate.getDay() === targetDay) { // If the current day matches the target weekday, increment count
+                count++;
+              }
+              if (count < weekNumber) { // If we haven't found the correct occurrence yet, move to the next day
+                newStartDate.setDate(newStartDate.getDate() + 1);
+              }
+            }
+          } else { // Handling negative week numbers (e.g., "-1SU" = last Sunday)
+            newStartDate.setMonth(newStartDate.getMonth() + 1, 0); // Move to the last day of the month
+
+            let count = 0;
+            while (count > weekNumber) {
+              if (newStartDate.getDay() === targetDay) { // If the current day matches the target weekday, decrement count
+                count--;
+              }
+              if (count > weekNumber) { // If we haven't found the correct occurrence yet, move to the previous day
+                newStartDate.setDate(newStartDate.getDate() - 1);
+              }
+            }
+          }
+        }
+
+      } else if (typeof event.byMonthDay === 'number') { // Handle events occurring on a specific day of the month (e.g., "15" for 15th of each month)
+        newStartDate.setMonth(newStartDate.getMonth() + (i * interval));
+      }
+
+      // Format the new date to ISO format (yyyy-MM-dd)
+      const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
+
+      // Ensure the event is within the valid recurrence range
+      if (newStartDateISO >= event.startDate && (!event.until || newStartDateISO <= event.untilISO)) {
+        normalizedEvents.push({
+          ...event,
+          uid: event.uid + '' + i, // Append index to the UID for uniqueness
+          startDate: newStartDateISO,
+          endDate: newStartDateISO,
+          freq: null // Remove recurrence frequency as the event is now fully expanded
+        });
+      }
+    }
+
+  } else { // TODO: Handle multi-day events that repeat monthly
+
+  }
+};
 
 const handleYearlyEvents = (normalizedEvents, event, years, interval = 1) => {
 
@@ -635,12 +737,36 @@ const getEventStyle = (event, targetDayDate) => {
 <style scoped>
 .current-time-line {
   background: #B8001F;
-  z-index: 5;
+  z-index: 20;
 }
 
 .current-time-line::before {
   content: attr(currentTime);
   background-color: #B8001F;
+}
+
+.calendar-container {
+  max-height: calc(65vh);
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.calendar-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.calendar-container::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+.calendar-container::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+.calendar-container::-webkit-scrollbar-thumb:hover {
+  background: #d0d0d0;
 }
 
 </style>
