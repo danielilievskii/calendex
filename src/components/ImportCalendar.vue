@@ -314,7 +314,7 @@ const extractEvents = (icsContent: string) => {
       wkst: icalEvent.component.jCal[1][2][3].wkst ?? null,
       byDay: icalEvent.component.jCal[1][2][3].byday ?? [],
       byMonthDay: icalEvent.component.jCal[1][2][3].bymonthday ?? null,
-      duration: icalEvent.duration,
+      duration: formatDurationToString(icalEvent.duration),
       formattedDuration: formatDuration(icalEvent.startDate.toJSDate(), icalEvent.endDate.toJSDate()),
       summary: icalEvent.summary,
       description: icalEvent.description,
@@ -357,6 +357,26 @@ const handleURLDownload = async () => {
     return null;
   }
 };
+
+//TODO: fix duration since we are now saving pure string
+const formatDurationToString = (duration: any) => {
+    if(typeof duration === 'object' && duration !== null) {
+      const weeks = duration.weeks || 0;
+      const days = duration.days || 0;
+      const hours = duration.hours || 0;
+      const minutes = duration.minutes || 0;
+      const seconds = duration.seconds || 0;
+
+      const parts = [];
+      if (weeks > 0) parts.push(`${weeks} week${weeks > 1 ? 's' : ''}`);
+      if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+      if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+      if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+      if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+
+      return parts.length > 0 ? parts.join(', ') : 'None';
+    }
+}
 </script>
 
 <style scoped>
