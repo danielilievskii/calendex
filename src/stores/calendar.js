@@ -17,8 +17,6 @@ export const useCalendarStore = defineStore('calendar', {
                 events: toRaw(calendar.events).map(event => ({
                     ...toRaw(event),
                     duration: event.duration?.toString() || event.duration,
-                    // startDateTime: event.startTime instanceof Date ? event.startTime.toISOString() : event.startTime,
-                    // endDateTime: event.endTime instanceof Date ? event.endTime.toISOString() : event.endTime
                 }))
             };
 
@@ -57,10 +55,10 @@ export const useCalendarStore = defineStore('calendar', {
 
         },
         updateFilteredEvents(selectedCalendars) {
-            this.calendars.forEach(cal => {
-                cal.selected = selectedCalendars.includes(cal.uid);
-            });
-            this.saveToLocalStorage()
+            // this.calendars.forEach(cal => {
+            //     cal.selected = selectedCalendars.includes(cal.uid);
+            // });
+            // this.saveToLocalStorage()
 
             if(selectedCalendars.length > 0) {
                 this.filteredEvents = this.calendars

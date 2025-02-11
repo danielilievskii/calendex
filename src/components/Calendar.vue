@@ -115,6 +115,7 @@ const colorStore = useColorStore();
 const calendarStore = useCalendarStore();
 
 const showModal = ref(false);
+const selectedEvent = reactive({});
 
 const toggleModal = (event) => {
   showModal.value = !showModal.value;
@@ -125,13 +126,10 @@ const toggleModal = (event) => {
   }
 }
 
-const selectedEvent = reactive({});
-
 
 let events = computed(() => {
   return calendarStore.filteredEvents
 })
-
 
 const normalizedEvents = computed(() => {
   return normalizeEvents(events.value);
@@ -149,9 +147,11 @@ onMounted(() => {
 
 // Formatted week displayed in calendar header
 const formattedWeek = computed(() => {
-  const start = format(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), "MMMM dd");
-  const end = format(addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), 6), "MMMM dd");
-  return `${start} - ${end}`;
+  const start = format(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), "dd MMMM");
+  const end = format(addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), 6), "dd MMMM");
+
+  const year = format(weekSwitch.value, "yyyy")
+  return `${start} - ${end}, ${year}`;
 });
 
 // Current time displayed before the line in calendar grid
@@ -170,8 +170,6 @@ const formattedCurrentTime = computed(() => {
   return `${currentHour.toString()}:${currentMinutes.toString().padStart(2, "0")} ${suffix}`;
 })
 
-const calendarContainerRef = ref(null);
-
 const currentTimeStyle = computed(() => {
   const currentHour = now.value.getHours();
   const currentMinutes = now.value.getMinutes();
@@ -180,11 +178,13 @@ const currentTimeStyle = computed(() => {
   return { top: `${position}px` };
 })
 
+const calendarContainerRef = ref(null);
+
 const scrollToCurrentTime = () => {
   if (calendarContainerRef.value) {
     const currentHour = now.value.getHours();
     const currentMinutes = now.value.getMinutes();
-    const scrollPosition = (currentHour * 50) + (currentMinutes * (50 / 60)) - 100;
+    const scrollPosition = (currentHour * 50) + (currentMinutes * (50 / 60)) - 300;
     calendarContainerRef.value.scrollTop = scrollPosition;
   }
 };
@@ -214,40 +214,25 @@ const nextWeek = () => {
   weekSwitch.value = addDays(weekSwitch.value, 7);
 };
 
-const getMultiDayEvents = (date) => {
-  return normalizedEvents.value.filter((event) => {
-    const targetDate = new Date(date);
-
-    if(event.startDate !== event.endDate) {
-      const start = new Date(event.startDate);
-      const end = new Date(event.endDate);
-
-      if(start <= targetDate && targetDate <= end) {
-        return true
-      }
-    }
-  })
-}
-
 const getSingleDayEvents = (date) => {
   return normalizedEvents.value.filter((event) => {
     if(event.startDate === event.endDate) {
-      if (!event.endsNever) { // Checks if the event has ending or not
+      if (!event.endsNever) { // If the event has ending, that means the event is already descrutured in separate objects
         return event.startDate === date
       } else {
         switch (event.freq) {
-          case 'DAILY': {
+          case 'DAILY': { // Scenario when the event has no ending, but happens daily
             if (date >= event.startDate) {
               if (!event.interval) { // If the event doesn't have interval, it returns each event for each day
                 return true
-              } else { // Otherwise, it returns the events for the corresponding day based on the interval
+              } else { // Otherwise, it returns the event for the corresponding day based on the interval
                 const days = calculateDaysBetween(event.startDate, date)
                 if (days % event.interval === 0) return true
               }
             }
             break;
           }
-          case 'WEEKLY': {
+          case 'WEEKLY': { // Scenario when the event has NO ending, but happens weekly
             if (date >= event.startDate) {
               if (typeof event.byDay == 'string') {
                 event.byDay = Array.of(event.byDay)
@@ -258,25 +243,33 @@ const getSingleDayEvents = (date) => {
 
               for (let day of event.byDay) {
                 const eventWeekDay = getNumValueForICSDay(day)
-                if (eventWeekDay === targetWeekDay) return true
+                if(!event.wkst) { // If the event doesn't have interval, it returns each event for each corresponding week day
+                  if (eventWeekDay === targetWeekDay) return true
+                } else {  // Otherwise, it returns the event for the corresponding week day based on the interval
+                  const weeks = calculateWeeksBetween(event.startDate, date) + 1;
+                  if(weeks % (event.wkst + 1) === 0) {
+                    if (eventWeekDay === targetWeekDay) return true
+                  }
+                }
+
               }
 
             }
             break
           }
-          case 'MONTHLY': {
+          case 'MONTHLY': { // Scenario when the event has NO ending, but happens monthly
             if(date >= event.startDate) {
-                // Scenario when the event has no ending, but happens monthly
+
             }
             break;
 
           }
-          case 'YEARLY': {
+          case 'YEARLY': { // Scenario when the event has NO ending, but happens yearly
             if (date >= event.startDate) {
               const dateJS = new Date(date);
               const eventStartJS = new Date(event.startDate);
 
-              if (!event.interval) {  // If the event doesn't have interval, it returns each event for every year
+              if (!event.interval) {  // If the event doesn't have interval, it returns the event for each year
                 if (dateJS.getMonth() === eventStartJS.getMonth() && dateJS.getDate() === eventStartJS.getDate()) {
                   return true;
                 }
@@ -296,12 +289,25 @@ const getSingleDayEvents = (date) => {
   });
 };
 
+const getMultiDayEvents = (date) => {
+  return normalizedEvents.value.filter((event) => {
+    const targetDate = new Date(date);
+
+    if(event.startDate !== event.endDate) {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+
+      if(start <= targetDate && targetDate <= end) {
+        return true
+      }
+    }
+  })
+}
 
 
-// TODO: Refactor
 const normalizeEvents = (rawEvents) => {
-  console.log('RAW EVENTS: ')
-  console.log(rawEvents)
+  // console.log('RAW EVENTS: ')
+  // console.log(rawEvents)
 
   let normalizedEvents = []
   rawEvents.forEach(event => {
@@ -314,97 +320,66 @@ const normalizeEvents = (rawEvents) => {
       } else {
         switch (event.freq) {
           case 'DAILY': {
-            if (event.until) { // Ends on x date:
+            if (event.until) { // Ends on x date
               const days = calculateDaysBetween(event.startDate, event.until) + 1
-              if (event.interval) {
-                handleDailyEvents(normalizedEvents, event, days, event.interval)
-              } else {
-                handleDailyEvents(normalizedEvents, event, days)
-              }
+              handleDailyEvents(normalizedEvents, event, days, event.interval ?? 1);
 
-            } else if (event.count) { // Ends after x days:
+            } else if (event.count) { // Ends after x days
               const days = event.count
-              if (event.interval) {
-                handleDailyEvents(normalizedEvents, event, days, event.interval)
-              } else {
-                handleDailyEvents(normalizedEvents, event, days)
-              }
+              handleDailyEvents(normalizedEvents, event, days, event.interval ?? 1);
             } else { // Ends never:
               normalizedEvents.push({
                 ...event,
-                endsNever: true //handled in getEventsForDay()
+                endsNever: true //handled in getSingleDayEvents()
               })
             }
             break
           }
-          case 'WEEKLY': { // event.wkst default: 1 -> no need for if statements
-            if (event.until) { // Ends on x date:
+          case 'WEEKLY': {
+            if (event.until) { // Ends on x date
               const weeks = calculateWeeksBetween(event.startDate, event.until) + 1
-              if(event.wkst) {
-                handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
-              } else {
-                handleWeeklyEvents(normalizedEvents, event, weeks)
-              }
+              handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst ? event.wkst + 1 : undefined);
 
-            } else if (event.count) { // Ends after x weeks:
+            } else if (event.count) { // Ends after x weeks
               const weeks = event.count
-              if(event.wkst) {
-                handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst)
-              } else {
-                handleWeeklyEvents(normalizedEvents, event, weeks)
-              }
+              handleWeeklyEvents(normalizedEvents, event, weeks, event.wkst ? event.wkst + 1 : undefined);
             } else {
               normalizedEvents.push({
                 ...event,
-                endsNever: true // handled in getEventsForDay()
+                endsNever: true //handled in getSingleDayEvents()
               })
             }
             break
           }
           case 'MONTHLY': {
-            if(event.until) {
+            if(event.until) { // Ends on x date
               const months = calculateMonthsBetween(event.startDate, event.until)
-              if (event.interval) {
-                handleMonthlyEvents(normalizedEvents, event, months, event.interval)
-              } else {
-                handleMonthlyEvents(normalizedEvents, event, months)
-              }
+              handleMonthlyEvents(normalizedEvents, event, months, event.interval ?? 1)
 
-            } else if (event.count) {
+            } else if (event.count) { // Ends after x months
               const months = event.count
-              if (event.interval) {
-                handleMonthlyEvents(normalizedEvents, event, months, event.interval)
-              } else {
-                handleMonthlyEvents(normalizedEvents, event, months)
-              }
+              handleMonthlyEvents(normalizedEvents, event, months, event.interval ?? 1)
             } else {
               normalizedEvents.push({
                 ...event,
-                endsNever: true // handled in getEventsForDay()
+                endsNever: true //handled in getSingleDayEvents()
               })
             }
             break
           }
           case 'YEARLY': {
-            if (event.until) { // Ends on x date:
+            if (event.until) { // Ends on x date
               const years = calculateYearsBetween(event.startDate, event.until) + 1
-              if (event.interval) {
-                handleYearlyEvents(normalizedEvents, event, years, event.interval)
-              } else {
-                handleYearlyEvents(normalizedEvents, event, years)
-              }
+              handleYearlyEvents(normalizedEvents, event, years, event.interval ?? 1)
 
-            } else if (event.count) { // Ends after x days:
+            } else if (event.count) { // Ends after x years
               const years = event.count
-              if (event.interval) {
-                handleYearlyEvents(normalizedEvents, event, years, event.interval)
-              } else {
-                handleYearlyEvents(normalizedEvents, event, years)
-              }
+              handleYearlyEvents(normalizedEvents, event, years, event.interval ?? 1)
+
             } else { // Ends never:
               normalizedEvents.push({
                 ...event,
-                endsNever: true //handled in getEventsForDay()
+                endsNever: true //handled in getSingleDayEvents()
               })
             }
             break
@@ -424,13 +399,14 @@ const handleMultiDayEvents = (normalizedEvents, event) => {
 
 const handleDailyEvents = (normalizedEvents, event, days, interval = 1) => {
 
-  if(event.startDate === event.endDate) { // Destruct event in multiple days
+  if(event.startDate === event.endDate) { // Destruct event in multiple objects for each day
     for (let i = 0; i < days; i++) {
       const newStartDate = new Date(event.startDate)
       newStartDate.setDate(newStartDate.getDate() + (i * interval))
 
       const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
 
+      // Ensure the event is within the valid recurrence range
       if(!event.until || newStartDateISO <= event.untilISO) {
         normalizedEvents.push({
           ...event,
@@ -443,13 +419,13 @@ const handleDailyEvents = (normalizedEvents, event, days, interval = 1) => {
       }
 
     }
-  } else {  // TODO: Scenario when the duration is more than 24hours, but happens daily
+  } else {  // Scenario when the duration is more than 24hours, but happens daily
 
   }
 }
 const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
 
-  if (event.startDate === event.endDate) { // Destruct event in multiple weeks
+  if (event.startDate === event.endDate) { // Destruct event in multiple objects for each week
 
     for (let i = 0; i < weeks; i++) {
 
@@ -467,6 +443,7 @@ const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
 
         const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
 
+        // Ensure the event is within the valid recurrence range
         if (newStartDateISO >= event.startDate && (!event.until || newStartDateISO <= event.untilISO)) {
           normalizedEvents.push({
             ...event,
@@ -482,14 +459,14 @@ const handleWeeklyEvents = (normalizedEvents, event, weeks, interval = 1) => {
       }
     }
 
-  } else { // TODO: Scenario when the duration is more than 24hours, but happens weekly
+  } else { // Scenario when the duration is more than 24hours, but happens weekly
 
   }
 }
 
 const handleMonthlyEvents = (normalizedEvents, event, months, interval = 1) => {
 
-  if (event.startDate === event.endDate) { // Handle single-day monthly recurring events
+  if (event.startDate === event.endDate) { // Destruct event in multiple objects for each month
     const daysMap = {
       SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6
     };
@@ -497,69 +474,69 @@ const handleMonthlyEvents = (normalizedEvents, event, months, interval = 1) => {
     for (let i = 0; i < months; i++) {
       const newStartDate = new Date(event.startDate);
 
-      if (typeof event.byDay == 'string') { // Handle events occurring on specific weekdays (e.g., "1SU" for first Sunday)
+      if (typeof event.byDay == 'string') { // Handle events occurring on specific weekdays ("1SU" for first Sunday)
         const match = event.byDay.match(/^(-?\d+)([A-Z]{2})$/);
         if (match) {
-          const weekNumber = parseInt(match[1], 10); // Extract week number (e.g., 1, 2, -1)
-          const weekDayStr = match[2]; // Extract weekday string (e.g., "SU", "MO")
+          const weekNumber = parseInt(match[1], 10);
 
-          const targetDay = daysMap[weekDayStr]; // Convert weekday string to numeric day (0-6)
-          newStartDate.setMonth(newStartDate.getMonth() + (i * interval)); // Move to the correct month
+          const weekDayStr = match[2];
+          const weekDayNum = daysMap[weekDayStr];
 
-          if (weekNumber > 0) { // Handling positive week numbers (e.g., "2MO" = second Monday)
-            newStartDate.setDate(1); // Start from the first day of the month
+          newStartDate.setMonth(newStartDate.getMonth() + (i * interval));
+
+          if (weekNumber > 0) { // Handling positive week numbers ("2MO" = second Monday)
+            newStartDate.setDate(1); // First day of the month
 
             let count = 0;
             while (count < weekNumber) {
-              if (newStartDate.getDay() === targetDay) { // If the current day matches the target weekday, increment count
+              if (newStartDate.getDay() === weekDayNum) {
                 count++;
               }
-              if (count < weekNumber) { // If we haven't found the correct occurrence yet, move to the next day
+              if (count < weekNumber) {
                 newStartDate.setDate(newStartDate.getDate() + 1);
               }
             }
-          } else { // Handling negative week numbers (e.g., "-1SU" = last Sunday)
-            newStartDate.setMonth(newStartDate.getMonth() + 1, 0); // Move to the last day of the month
+          } else { // Handling negative week numbers ("-1SU" = last Sunday)
+            newStartDate.setMonth(newStartDate.getMonth() + 1, 0); // Last day of the month
 
             let count = 0;
             while (count > weekNumber) {
-              if (newStartDate.getDay() === targetDay) { // If the current day matches the target weekday, decrement count
+              if (newStartDate.getDay() === weekDayNum) {
                 count--;
               }
-              if (count > weekNumber) { // If we haven't found the correct occurrence yet, move to the previous day
+              if (count > weekNumber) {
                 newStartDate.setDate(newStartDate.getDate() - 1);
               }
             }
           }
         }
 
-      } else if (typeof event.byMonthDay === 'number') { // Handle events occurring on a specific day of the month (e.g., "15" for 15th of each month)
+      } else if (typeof event.byMonthDay === 'number') { // Handle events occurring on a specific day of the month
         newStartDate.setMonth(newStartDate.getMonth() + (i * interval));
       }
 
-      // Format the new date to ISO format (yyyy-MM-dd)
       const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
 
       // Ensure the event is within the valid recurrence range
       if (newStartDateISO >= event.startDate && (!event.until || newStartDateISO <= event.untilISO)) {
         normalizedEvents.push({
           ...event,
-          uid: event.uid + '' + i, // Append index to the UID for uniqueness
+          uid: event.uid + '' + i,
           startDate: newStartDateISO,
           endDate: newStartDateISO,
-          freq: null // Remove recurrence frequency as the event is now fully expanded
+          freq: null
         });
       }
     }
 
-  } else { // TODO: Handle multi-day events that repeat monthly
+  } else { // Scenario when the duration is more than 24hours, but happens monthly
 
   }
 };
 
 const handleYearlyEvents = (normalizedEvents, event, years, interval = 1) => {
 
-  if(event.startDate === event.endDate) {  // Destruct event in multiple years
+  if(event.startDate === event.endDate) {  // Destruct event in multiple objects for each year
     for (let i = 0; i < years; i++) {
       const newStartDate = new Date(event.startDate)
       const year = newStartDate.getFullYear()
@@ -569,6 +546,7 @@ const handleYearlyEvents = (normalizedEvents, event, years, interval = 1) => {
 
       const newStartDateISO = format(newStartDate, "yyyy-MM-dd");
 
+      // Ensure the event is within the valid recurrence range
       if(!event.until || newStartDateISO <= event.untilISO) {
         normalizedEvents.push({
           ...event,
@@ -581,7 +559,7 @@ const handleYearlyEvents = (normalizedEvents, event, years, interval = 1) => {
       }
 
     }
-  } else {  // TODO: Scenario when the duration is more than 24hours, but happens yearly
+  } else {  // Scenario when the duration is more than 24hours, but happens yearly
 
   }
 
