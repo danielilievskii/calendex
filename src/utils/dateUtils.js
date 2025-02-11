@@ -90,7 +90,7 @@ export const getFullDay = (short) => {
 }
 
 
-export const extractDate = (dateTimeObj) => {
+export const extractDateISOFromObj = (dateTimeObj) => {
     const localDateTime = dateTimeObj.toLocaleString(undefined, {
         year: 'numeric',
         month: '2-digit',
@@ -108,7 +108,7 @@ export const extractDate = (dateTimeObj) => {
     return date[2] + '-' + date[0] + '-' + date[1] ;
 };
 
-export const extractStringDate = (dateTime) => {
+export const extractDateISOFromString = (dateTime) => {
     const localDateTime = new Date(dateTime).toLocaleString(undefined, {
         year: 'numeric',
         month: '2-digit',
@@ -126,7 +126,7 @@ export const extractStringDate = (dateTime) => {
     return date[2] + '-' + date[0] + '-' + date[1] ;
 };
 
-export const extractTime = (dateTimeObj) => {
+export const extractTimeFromObj = (dateTimeObj) => {
     const localDateTime = dateTimeObj.toLocaleString(undefined, {
         hour: 'numeric',
         minute: 'numeric',
@@ -150,11 +150,11 @@ export const isSameDate = (date1, date2) => {
     );
 }
 
-export const formatDateToISO = (date) => {
+export const formatFromStringToDateISO = (date) => {
     return new Date(date).toLocaleString(undefined).split(",")[0];
 }
 
-export const formatDateTimeToString = (date) => {
+export const formatFromStringToDateTime = (date) => {
     return new Date(date).toLocaleString(undefined, {
         weekday: 'long',
         year: 'numeric',
@@ -166,7 +166,7 @@ export const formatDateTimeToString = (date) => {
     });
 }
 
-export const formatDateToString = (date) => {
+export const formatFromStringToDate = (date) => {
     return new Date(date).toLocaleString(undefined, {
         weekday: 'long',
         year: 'numeric',
@@ -175,7 +175,7 @@ export const formatDateToString = (date) => {
     });
 }
 
-export const formatDateToStringShort = (date) => {
+export const formatFromStringToDateShort = (date) => {
     return new Date(date).toLocaleString(undefined, {
         year: 'numeric',
         month: 'short',
@@ -206,4 +206,23 @@ export const formatDuration = (startDateTime, endDateTime) => {
     }
 
     return `${startHours.toString()}:${startMinutes.toString().padStart(2, "0")} ${suffixStart} - ${endHours.toString()}:${endMinutes.toString().padStart(2, "0")} ${suffixEnd}`
+}
+
+export const formatDurationToString = (duration) => {
+    if(typeof duration === 'object' && duration !== null) {
+        const weeks = duration.weeks || 0;
+        const days = duration.days || 0;
+        const hours = duration.hours || 0;
+        const minutes = duration.minutes || 0;
+        const seconds = duration.seconds || 0;
+
+        const parts = [];
+        if (weeks > 0) parts.push(`${weeks} week${weeks > 1 ? 's' : ''}`);
+        if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+        if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+        if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+        if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+
+        return parts.length > 0 ? parts.join(', ') : 'None';
+    }
 }

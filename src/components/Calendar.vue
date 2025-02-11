@@ -105,9 +105,9 @@ import {
   calculateWeeksBetween,
   calculateMonthsBetween,
   calculateYearsBetween,
-  formatDateToISO, formatDuration,
+  formatFromStringToDateISO, formatDuration,
   getDaysInYear,
-  getNumValueForICSDay, getNumValueForJSDay, isSameDate, subtractOneDay, extractDate
+  getNumValueForICSDay, getNumValueForJSDay, isSameDate, subtractOneDay, extractDateISOFromObj
 } from "@/utils/dateUtils.js";
 import Modal from "@/components/EventDetailsModal.vue";
 
@@ -674,7 +674,7 @@ const getEventStyle = (event, targetDayDate) => {
         gridColumnEnd: targetWeekEndDate <= endDate ? 8 : endWeekDay + 2
       };
 
-      if(targetDayDate === event.startDate && targetDayDate === extractDate(endDate)) {
+      if(targetDayDate === event.startDate && targetDayDate === extractDateISOFromObj(endDate)) {
         return {
           ...baseStyle,
           ...getGridStyle,
@@ -703,7 +703,7 @@ const getEventStyle = (event, targetDayDate) => {
         };
       }
 
-      if (targetDayDate === extractDate(endDate)) {
+      if (targetDayDate === extractDateISOFromObj(endDate)) {
         return {
           ...baseStyle,
           ...getGridStyle,
@@ -714,7 +714,7 @@ const getEventStyle = (event, targetDayDate) => {
         };
       }
 
-      if(targetDayDate !== event.startDate && targetDayDate !== extractDate(endDate)) {
+      if(targetDayDate !== event.startDate && targetDayDate !== extractDateISOFromObj(endDate)) {
         return {
           ...baseStyle,
           ...getGridStyle,

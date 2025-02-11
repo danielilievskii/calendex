@@ -103,22 +103,13 @@
                   <DropdownMenuItem>Edit</DropdownMenuItem>
                 </RouterLink>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid, calendar.name)">Delete</DropdownMenuItem>
+                <DropdownMenuItem class="text-red-500" @click="deleteCalendar(calendar.uid)">Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
         </label>
       </div>
-
-      <!--      <div class="flex justify-center mt-5">-->
-      <!--        <RouterLink to="/calendar-import" class="inline-flex">-->
-      <!--          <button class="bg-[#31776c] hover:bg-[#3e9c86] text-md font-medium text-white py-2 px-4 duration-200 rounded-lg">-->
-      <!--            + Add calendar-->
-      <!--          </button>-->
-      <!--        </RouterLink>-->
-      <!--      </div>-->
-
 
       <hr class="my-4"/>
 
@@ -160,22 +151,12 @@ import {MoreVerticalIcon} from 'lucide-vue-next'
 
 import {computed, ref, watch} from "vue";
 import {getLocalTimeZone, today} from '@internationalized/date'
-import router from "@/router";
-
 
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore();
 const colorStore = useColorStore();
 
 const { toast } = useToast()
-
-const selectedCalendars = computed(() =>
-    calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid)
-);
-
-watch(selectedCalendars, (newVal) => {
-  calendarStore.updateFilteredEvents(newVal)
-}, {immediate: true});
 
 const value = ref(today(getLocalTimeZone()))
 
@@ -186,10 +167,18 @@ function toggleDropdown() {
 }
 
 const selectCalendar = (uid: string) => {
-    calendarStore.selectCalendar(uid)
+  calendarStore.selectCalendar(uid)
 }
 
-const deleteCalendar = (uid: string, name) => {
+const selectedCalendars = computed(() =>
+    calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid)
+);
+
+watch(selectedCalendars, (newVal) => {
+  calendarStore.updateFilteredEvents(newVal)
+}, {immediate: true});
+
+const deleteCalendar = (uid: string) => {
 
   toast({
     title: `The calendar has been deleted successfully. `,

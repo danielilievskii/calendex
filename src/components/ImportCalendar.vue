@@ -100,14 +100,13 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import axios from 'axios'
 import { useRoute } from 'vue-router'
 import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useToast } from '@/components/ui/toast/use-toast'
 
 import { useCalendarStore } from '@/stores/calendar';
-import { formatDuration, extractDate, extractTime, extractStringDate} from  "@/utils/dateUtils.js"
+import { formatDuration, formatDurationToString, extractDateISOFromObj, extractTimeFromObj, extractDateISOFromString} from  "@/utils/dateUtils.js"
 
 const calendarStore = useCalendarStore();
 
@@ -194,7 +193,7 @@ let events = ref([])
 const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 //TODO:
-const handleSubmit = async (values: any) => {
+const handleSubmit = async () => {
 
   errCalName.value = !calendarName.value;
   errCalColor.value = !calendarColor.value;
@@ -271,10 +270,10 @@ const resetForm = () => {
   calendarColor.value = '';
   calendarType.value = '';
   calendarUrl.value = '';
-  events.value = [];
-
-  importMethod.value = 'url';
   calendarFile.value = null
+  importMethod.value = 'url';
+
+  events.value = [];
 }
 
 function generateUniqueId(name, url) {
@@ -301,14 +300,14 @@ const extractEvents = (icsContent: string) => {
     return {
       uid: icalEvent.uid,
       startDateTime: icalEvent.startDate.toJSDate(),
-      startDate: extractDate(icalEvent.startDate.toJSDate()),
-      startTime: extractTime(icalEvent.startDate.toJSDate()),
+      startDate: extractDateISOFromObj(icalEvent.startDate.toJSDate()),
+      startTime: extractTimeFromObj(icalEvent.startDate.toJSDate()),
       endDateTime: icalEvent.endDate.toJSDate(),
-      endDate: extractDate(icalEvent.endDate.toJSDate()),
-      endTime: extractTime(icalEvent.endDate.toJSDate()),
+      endDate: extractDateISOFromObj(icalEvent.endDate.toJSDate()),
+      endTime: extractTimeFromObj(icalEvent.endDate.toJSDate()),
       freq: icalEvent.component.jCal[1][2][3].freq ?? null,
       until: icalEvent.component.jCal[1][2][3].until ?? null,
-      untilISO: icalEvent.component.jCal[1][2][3].until ? extractStringDate(icalEvent.component.jCal[1][2][3].until) : null,
+      untilISO: icalEvent.component.jCal[1][2][3].until ? extractDateISOFromString(icalEvent.component.jCal[1][2][3].until) : null,
       count: icalEvent.component.jCal[1][2][3].count ?? null,
       interval: icalEvent.component.jCal[1][2][3].interval ?? null,
       wkst: icalEvent.component.jCal[1][2][3].wkst ?? null,
@@ -358,25 +357,7 @@ const handleURLDownload = async () => {
   }
 };
 
-//TODO: fix duration since we are now saving pure string
-const formatDurationToString = (duration: any) => {
-    if(typeof duration === 'object' && duration !== null) {
-      const weeks = duration.weeks || 0;
-      const days = duration.days || 0;
-      const hours = duration.hours || 0;
-      const minutes = duration.minutes || 0;
-      const seconds = duration.seconds || 0;
 
-      const parts = [];
-      if (weeks > 0) parts.push(`${weeks} week${weeks > 1 ? 's' : ''}`);
-      if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
-      if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
-      if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
-      if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
-
-      return parts.length > 0 ? parts.join(', ') : 'None';
-    }
-}
 </script>
 
 <style scoped>

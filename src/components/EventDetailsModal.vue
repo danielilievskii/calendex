@@ -35,8 +35,8 @@
               ></i>
               {{
                 props.selectedEvent?.startDate === props.selectedEvent?.endDate
-                    ? formatDateToString(props.selectedEvent?.startDateTime || '') + ' ' + (props.selectedEvent?.formattedDuration || '')
-                    : formatDateTimeToString(props.selectedEvent?.startDateTime || '') + ' - ' + formatDateTimeToString(props.selectedEvent?.endDateTime || '')
+                    ? formatFromStringToDate(props.selectedEvent?.startDateTime || '') + ' ' + (props.selectedEvent?.formattedDuration || '')
+                    : formatFromStringToDateTime(props.selectedEvent?.startDateTime || '') + ' - ' + formatFromStringToDateTime(props.selectedEvent?.endDateTime || '')
               }}
             </p>
 
@@ -76,8 +76,7 @@
 import DOMPurify from 'dompurify';
 
 import {defineProps} from 'vue';
-import {formatDateToISO, formatDateToString, formatDateTimeToString, getFullDay, formatDateToStringShort} from "../utils/dateUtils.js";
-import {} from "../utils/dateUtils.js";
+import {formatFromStringToDate, formatFromStringToDateTime, getFullDay, formatFromStringToDateShort} from "../utils/dateUtils.js";
 
 // Define props
 const props = defineProps<{
@@ -126,7 +125,7 @@ const getFrequency = (freq, byDay, interval, wkst, until, count) => {
   }
 
   if (until) {
-    text += `, ending on ${formatDateToStringShort(until)}.`;
+    text += `, ending on ${formatFromStringToDateShort(until)}.`;
   } else if (count) {
     text += ` for a total of ${count} occurrences.`;
   }

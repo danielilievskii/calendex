@@ -44,7 +44,7 @@
               {{ event.summary }}
             </TableCell>
             <TableCell class="w-1/6 px-4 py-2">{{ event.location || "No location" }}</TableCell>
-            <TableCell class="w-1/6 px-4 py-2">{{ formatDateTimeToString(event.startDateTime) }}</TableCell>
+            <TableCell class="w-1/6 px-4 py-2">{{ formatFromStringToDateTime(event.startDateTime) }}</TableCell>
             <TableCell class="w-1/6 px-4 py-2 pl-8">
                 <Badge class="bg-[#52B788]">{{ event.duration || 'Unknown' }}</Badge>
             </TableCell>
@@ -116,17 +116,14 @@ import SelectTrigger from '@/components/ui/select/SelectTrigger.vue'
 import SelectValue from '@/components/ui/select/SelectValue.vue'
 import Button from '@/components/ui/button/Button.vue'
 import Badge from '@/components/ui/badge/Badge.vue'
-import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
-import { 
-  MoreVerticalIcon, 
+
+import {
   ChevronLeftIcon, 
   ChevronRightIcon,
-  FilterIcon,
-  SettingsIcon
 } from 'lucide-vue-next'
 import { useCalendarStore } from '@/stores/calendar'
 import { useColorStore } from '@/stores/colors';
-import {formatDateTimeToString} from "../utils/dateUtils.js";
+import {formatFromStringToDateTime} from "../utils/dateUtils.js";
 
 const calendarStore = useCalendarStore()
 const colorStore = useColorStore()

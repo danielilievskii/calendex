@@ -8,7 +8,7 @@
             v-for="(tab, index) in tabs"
             :key="tab.path"
             :value="tab.path"
-            class="rounded-b-none text-lg transition-colors duration-200 
+            class="rounded-b-none text-lg transition-colors duration-200
               data-[state=active]:bg-white data-[state=active]:text-[#31776c]
               data-[state=inactive]:bg-[#31776c] data-[state=inactive]:text-white"
             :class="{ 'border-r border-[#40916C]': index !== tabs.length - 1 }"
