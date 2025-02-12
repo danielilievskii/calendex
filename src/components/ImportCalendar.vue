@@ -105,8 +105,9 @@ import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useToast } from '@/components/ui/toast/use-toast'
 
+import { corsProxyUrl } from "@/config/config";
 import { useCalendarStore } from '@/stores/calendar';
-import { formatDuration, formatDurationToString, extractDateISOFromObj, extractTimeFromObj, extractDateISOFromString} from  "@/utils/dateUtils.js"
+import { extractEvents } from "@/utils/icsParser";
 
 const calendarStore = useCalendarStore();
 
@@ -189,8 +190,6 @@ const radioOptions = [
 ]
 
 let events = ref([])
-
-const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 //TODO:
 const handleSubmit = async () => {
@@ -289,42 +288,6 @@ function generateUniqueId(name, url) {
   return Math.abs(hash).toString(36);
 }
 
-const extractEvents = (icsContent: string) => {
-  const jcalData = ICAL.default.parse(icsContent)
-  const vcalendar = new ICAL.default.Component(jcalData)
-  const vevents = vcalendar.getAllSubcomponents('vevent')
-
-  return vevents.map(event => {
-    const icalEvent = new ICAL.default.Event(event)
-
-    return {
-      uid: icalEvent.uid,
-      startDateTime: icalEvent.startDate.toJSDate(),
-      startDate: extractDateISOFromObj(icalEvent.startDate.toJSDate()),
-      startTime: extractTimeFromObj(icalEvent.startDate.toJSDate()),
-      endDateTime: icalEvent.endDate.toJSDate(),
-      endDate: extractDateISOFromObj(icalEvent.endDate.toJSDate()),
-      endTime: extractTimeFromObj(icalEvent.endDate.toJSDate()),
-      freq: icalEvent.component.jCal[1][2][3].freq ?? null,
-      until: icalEvent.component.jCal[1][2][3].until ?? null,
-      untilISO: icalEvent.component.jCal[1][2][3].until ? extractDateISOFromString(icalEvent.component.jCal[1][2][3].until) : null,
-      count: icalEvent.component.jCal[1][2][3].count ?? null,
-      interval: icalEvent.component.jCal[1][2][3].interval ?? null,
-      wkst: icalEvent.component.jCal[1][2][3].wkst ?? null,
-      byDay: icalEvent.component.jCal[1][2][3].byday ?? [],
-      byMonthDay: icalEvent.component.jCal[1][2][3].bymonthday ?? null,
-      duration: formatDurationToString(icalEvent.duration),
-      formattedDuration: formatDuration(icalEvent.startDate.toJSDate(), icalEvent.endDate.toJSDate()),
-      summary: icalEvent.summary,
-      description: icalEvent.description,
-      location: icalEvent.location,
-      sequence: icalEvent.sequence,
-      organizer: icalEvent.organizer,
-      attendees: icalEvent.attendees,
-    }
-  })
-}
-
 
 const handleFileUpload = () => {
   return new Promise((resolve, reject) => {
@@ -350,6 +313,7 @@ const handleURLDownload = async () => {
     let response = await fetch(corsProxyUrl + calendarUrl.value);
     let data = await response.text();
     let events = extractEvents(data);
+
     return events ?? [];
   } catch (error) {
     console.error("Error fetching URL:", error);
