@@ -1,13 +1,13 @@
 <template>
   <section class="md:px-24 md:py-12 p-6 pt-20">
-    <Events/>
+    <Agenda/>
   </section>
-
 </template>
 
 <style>
 
 </style>
+
 <script setup>
-import Events from "@/components/Agenda.vue";
+import Agenda from "@/components/Agenda.vue";
 </script>

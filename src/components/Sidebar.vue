@@ -10,7 +10,7 @@
   </span>
 
   <!-- Sidebar -->
-  <div :class="['sidebar  bg-[#F6F5F8] fixed top-0 bottom-0 h-screen shadow overflow-y-auto transition-all duration-300 z-40',
+  <div :class="['sidebar  bg-[#F6F5F8] fixed top-0 bottom-0 h-full shadow overflow-y-auto transition-all duration-300 z-40',
       sidebarStore.isSidebarCollapsed ? 'w-0 lg:w-[0px]' : 'w-[300px] lg:w-[300px]']">
 
     <div class="relative left-20 top-6" v-if="!sidebarStore.isSidebarCollapsed">

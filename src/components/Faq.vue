@@ -14,7 +14,7 @@
     </div>
 
     <div class="flex-1 flex justify-center hidden md:block mr-20 mt-14">
-      <img src="/src/assets/faq-removebg.png" alt="Frequently Asked Questions" class="" />
+      <img src="/src/assets/faq/faq-removebg.png" alt="Frequently Asked Questions" class="" />
     </div>
 
   </div>
