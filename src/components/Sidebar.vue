@@ -168,15 +168,16 @@ function toggleDropdown() {
 
 const selectCalendar = (uid: string) => {
   calendarStore.selectCalendar(uid)
+  calendarStore.updateFilteredEvents()
 }
 
 const selectedCalendars = computed(() =>
     calendarStore.calendars.filter(cal => cal.selected).map(cal => cal.uid)
 );
 
-watch(selectedCalendars, (newVal) => {
-  calendarStore.updateFilteredEvents(newVal)
-}, {immediate: true});
+// watch(selectedCalendars, (newVal) => {
+//   calendarStore.updateFilteredEvents(newVal)
+// }, {immediate: true});
 
 const deleteCalendar = (uid: string) => {
 

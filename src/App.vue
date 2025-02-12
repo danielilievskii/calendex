@@ -1,9 +1,34 @@
 <script setup>
+import { onMounted, onUnmounted } from "vue";
 import { RouterView } from 'vue-router'
-import { Toaster } from '@/components/ui/toast'
-import { useSidebarStore } from '@/stores/sidebar';
 import SidebarView from "@/views/SidebarView.vue";
+import { Toaster } from '@/components/ui/toast'
+
+import { useSidebarStore } from '@/stores/sidebar';
+import { useCalendarStore } from '@/stores/calendar';
+
 const sidebarStore = useSidebarStore();
+const calendarStore = useCalendarStore()
+
+
+let intervalId = null;
+
+onMounted(() => {
+  // calendarStore.refreshCalendars();
+  calendarStore.updateFilteredEvents();
+
+  intervalId = setInterval(() => {
+    calendarStore.refreshCalendars();
+    calendarStore.updateFilteredEvents();
+  }, 600000);
+});
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+});
+
 
 </script>
 
