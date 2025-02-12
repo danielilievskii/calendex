@@ -17,8 +17,8 @@ onMounted(() => {
   // calendarStore.refreshCalendars();
   calendarStore.updateFilteredEvents();
 
-  intervalId = setInterval(() => {
-    calendarStore.refreshCalendars();
+  intervalId = setInterval(async () => {
+    await calendarStore.refreshCalendars();
     calendarStore.updateFilteredEvents();
   }, 600000);
 });
