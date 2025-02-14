@@ -187,6 +187,7 @@ const deleteCalendar = (uid: string) => {
   });
 
   calendarStore.deleteCalendar(uid);
+  calendarStore.updateFilteredEvents()
 };
 
 
