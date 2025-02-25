@@ -44,3 +44,7 @@ npm install
 ```sh
 npm run dev
 ```
+
+4. Start a demo proxy [Heroku server](https://cors-anywhere.herokuapp.com/corsdemo)
+
+
