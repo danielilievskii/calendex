@@ -9,7 +9,6 @@ Calendex is a web application that allows users to import and view events from m
 - Dynamic event display and removal based on selected calendars
 - Multi-day events displayed separately above the main grid 
 - Overlapping event handling for better visibility
-- Current time indicator for real-time tracking
 - Live current time indicator
 - Supports recurring events with flexible configurations (daily, weekly, monthly, yearly)
 
