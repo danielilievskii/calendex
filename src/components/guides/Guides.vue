@@ -28,7 +28,7 @@
 
 
 <script setup>
-import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs'
+import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs/index.js'
 import {ref, computed} from "vue";
 
 const tabs = ref([

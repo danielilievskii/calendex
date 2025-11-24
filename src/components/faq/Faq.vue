@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion/index.js'
 
 export default {
   components: {
@@ -40,8 +40,7 @@ export default {
         { value: 'item-5', title: 'How do I create an ICS file?', content: 'You can create an ICS file by exporting your calendar from your calendar application.' },
         { value: 'item-6', title: 'Are ICS files compatible across different platforms?', content: 'Yes, ICS files are designed to be compatible across different platforms and calendar applications.' },
         { value: 'item-7', title: 'What information is stored in an ICS file?', content: 'An ICS file typically contains event details such as title, date, time, location, and description.' },
-        { value: 'item-8', title: 'Dali aplikacijata vredi za site poeni?', content: 'Nasiot odgovor e DA!' },
-      ],
+      ]
     }
   }
 }

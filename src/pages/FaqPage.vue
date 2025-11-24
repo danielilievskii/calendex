@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <div>
     <Faq/>
-  </section>
+  </div>
 </template>
 
 <style>
@@ -9,6 +9,6 @@
 </style>
 
 <script setup>
-import Faq from "@/components/Faq.vue";
+import Faq from "@/components/faq/Faq.vue";
 </script>
   

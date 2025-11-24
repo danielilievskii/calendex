@@ -6,27 +6,27 @@ const router = createRouter({
     {
       path: '/',
       name: 'calendar',
-      component: () => import('../views/CalendarView.vue')
+      component: () => import('@/pages/CalendarPage.vue')
     },
     {
       path: '/agenda',
       name: 'agenda',
-      component: () => import('../views/AgendaView.vue'),
+      component: () => import('@/pages/AgendaPage.vue'),
     },
     {
       path: '/calendar-import',
       name: 'calendar-import',
-      component: () => import('../views/ImportCalendarView.vue'),
+      component: () => import('@/pages/ImportCalendarPage.vue'),
     },
     {
       path: '/faq',
       name: 'faq',
-      component: () => import('../views/FaqView.vue'),
+      component: () => import('@/pages/FaqPage.vue'),
     },
     {
       path: '/guides',
       name: 'guides',
-      component: () => import('../views/GuidesView.vue'),
+      component: () => import('@/pages/GuidesPage.vue'),
     },
   ],
 })

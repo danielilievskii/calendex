@@ -105,7 +105,7 @@ import * as ICAL from 'ical.js'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useToast } from '@/components/ui/toast/use-toast'
 
-import { corsProxyUrl } from "@/config/config";
+import { proxyUrl } from "@/config/config";
 import { useCalendarStore } from '@/stores/calendar';
 import { extractEvents } from "@/utils/icsParser";
 
@@ -310,7 +310,11 @@ const handleFileUpload = () => {
 };
 const handleURLDownload = async () => {
   try {
-    let response = await fetch(corsProxyUrl + calendarUrl.value);
+
+    const encodedTargetUrl = encodeURIComponent(calendarUrl.value);
+    const proxiedUrl = `${proxyUrl}?url=${encodedTargetUrl}`;
+
+    let response = await fetch(proxiedUrl);
     let data = await response.text();
     let events = extractEvents(data);
 

@@ -1,1 +1,1 @@
-export const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+export const proxyUrl = 'https://prox-ics.vercel.app/api/proxy';

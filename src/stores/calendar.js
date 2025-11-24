@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {toRaw} from 'vue';
 import {extractEvents} from "@/utils/icsParser.js";
-import {corsProxyUrl} from "@/config/config.js";
+import {proxyUrl} from "@/config/config.js";
 import {useToast} from '@/components/ui/toast/use-toast'
 
 const {toast} = useToast();
@@ -74,7 +74,6 @@ export const useCalendarStore = defineStore('calendar', {
 
 
         saveToLocalStorage() {
-            // console.log("Saving to localStorage:", this.calendars);
             localStorage.setItem('calendars', JSON.stringify(this.calendars));
         },
         getCalendarById(id) {
@@ -86,7 +85,10 @@ export const useCalendarStore = defineStore('calendar', {
                 if (!calendar.url) continue;
 
                 try {
-                    let response = await fetch(corsProxyUrl + calendar.url);
+                    const encodedTargetUrl = encodeURIComponent(calendar.url);
+                    const proxiedUrl = `${proxyUrl}?url=${encodedTargetUrl}`;
+
+                    let response = await fetch(proxiedUrl);
                     let data = await response.text();
                     let events = extractEvents(data);
 

@@ -9,5 +9,5 @@
 </style>
 
 <script setup>
-import ImportCalendar from "@/components/ImportCalendar.vue";
+import ImportCalendar from "@/components/import-calendar/ImportCalendar.vue";
 </script>

@@ -1,11 +1,11 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
 import { RouterView } from 'vue-router'
-import SidebarView from "@/views/SidebarView.vue";
 import { Toaster } from '@/components/ui/toast'
 
 import { useSidebarStore } from '@/stores/sidebar';
 import { useCalendarStore } from '@/stores/calendar';
+import Sidebar from "@/components/layout/Sidebar.vue";
 
 const sidebarStore = useSidebarStore();
 const calendarStore = useCalendarStore()
@@ -33,7 +33,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <SidebarView/>
+  <Sidebar />
   <div :class="['transition-all duration-300', sidebarStore.isSidebarCollapsed ? 'ml-0': 'lg:ml-[300px]']">
     <RouterView  />
     <Toaster />

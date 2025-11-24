@@ -134,13 +134,13 @@
 </template>
 
 <script setup lang="ts">
-import Calendar from "@/components/ui/calendar/Calendar.vue";
-import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue'
-import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue'
-import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
-import DropdownMenuSeparator from '@/components/ui/dropdown-menu/DropdownMenuSeparator.vue'
-import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
-import Button from '@/components/ui/button/Button.vue'
+import Calendar from "../ui/calendar/Calendar.vue";
+import DropdownMenu from '../ui/dropdown-menu/DropdownMenu.vue'
+import DropdownMenuContent from '../ui/dropdown-menu/DropdownMenuContent.vue'
+import DropdownMenuItem from '../ui/dropdown-menu/DropdownMenuItem.vue'
+import DropdownMenuSeparator from '../ui/dropdown-menu/DropdownMenuSeparator.vue'
+import DropdownMenuTrigger from '../ui/dropdown-menu/DropdownMenuTrigger.vue'
+import Button from '../ui/button/Button.vue'
 import { useToast } from '@/components/ui/toast/use-toast'
 
 import {useSidebarStore} from '@/stores/sidebar';

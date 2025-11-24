@@ -103,19 +103,19 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Table from '@/components/ui/table/Table.vue'
-import TableBody from '@/components/ui/table/TableBody.vue'
-import TableCell from '@/components/ui/table/TableCell.vue'
-import TableHead from '@/components/ui/table/TableHead.vue'
-import TableHeader from '@/components/ui/table/TableHeader.vue'
-import TableRow from '@/components/ui/table/TableRow.vue'
-import Select from '@/components/ui/select/Select.vue'
-import SelectContent from '@/components/ui/select/SelectContent.vue'
-import SelectItem from '@/components/ui/select/SelectItem.vue'
-import SelectTrigger from '@/components/ui/select/SelectTrigger.vue'
-import SelectValue from '@/components/ui/select/SelectValue.vue'
-import Button from '@/components/ui/button/Button.vue'
-import Badge from '@/components/ui/badge/Badge.vue'
+import Table from '../ui/table/Table.vue'
+import TableBody from '../ui/table/TableBody.vue'
+import TableCell from '../ui/table/TableCell.vue'
+import TableHead from '../ui/table/TableHead.vue'
+import TableHeader from '../ui/table/TableHeader.vue'
+import TableRow from '../ui/table/TableRow.vue'
+import Select from '../ui/select/Select.vue'
+import SelectContent from '../ui/select/SelectContent.vue'
+import SelectItem from '../ui/select/SelectItem.vue'
+import SelectTrigger from '../ui/select/SelectTrigger.vue'
+import SelectValue from '../ui/select/SelectValue.vue'
+import Button from '../ui/button/Button.vue'
+import Badge from '../ui/badge/Badge.vue'
 
 import {
   ChevronLeftIcon, 
@@ -123,7 +123,7 @@ import {
 } from 'lucide-vue-next'
 import { useCalendarStore } from '@/stores/calendar'
 import { useColorStore } from '@/stores/colors';
-import {formatFromStringToDateTime} from "../utils/dateUtils.js";
+import {formatFromStringToDateTime} from "../../utils/dateUtils.js";
 
 const calendarStore = useCalendarStore()
 const colorStore = useColorStore()

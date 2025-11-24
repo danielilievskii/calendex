@@ -76,9 +76,8 @@
 import DOMPurify from 'dompurify';
 
 import {defineProps} from 'vue';
-import {formatFromStringToDate, formatFromStringToDateTime, getFullDay, formatFromStringToDateShort} from "../utils/dateUtils.js";
+import {formatFromStringToDate, formatFromStringToDateTime, getFullDay, formatFromStringToDateShort} from "@/utils/dateUtils";
 
-// Define props
 const props = defineProps<{
   showModal: boolean;
   toggleModal: Function;
@@ -90,7 +89,6 @@ const getSanitizedDescription = (description) => {
 };
 
 const getFrequency = (freq, byDay, interval, wkst, until, count) => {
-  console.log("inside get freq")
   let text = 'This event ';
 
   switch (freq) {
