@@ -1,7 +1,5 @@
 <template>
-  <PageWrapper>
-    <CalendarContainer/>
-  </PageWrapper>
+  <Calendar/>
 </template>
 
 <style>
@@ -9,6 +7,5 @@
 </style>
 
 <script setup>
-import PageWrapper from "@/components/layout/PageWrapper.vue";
-import CalendarContainer from "@/components/calendar/CalendarContainer.vue";
+import Calendar from "@/components/calendar/Calendar.vue";
 </script>

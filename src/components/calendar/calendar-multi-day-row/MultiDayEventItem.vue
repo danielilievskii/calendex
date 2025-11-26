@@ -1,6 +1,6 @@
 <template>
   <div
-      class="event p-1.5 text-sm mb-1 cursor-pointer"
+      class="event p-1.5 text-sm mb-1 cursor-pointer overflow-hidden"
       :style="getMultiDayEventStyle(event, date)"
       :class="[
       colorStore.getBorderColor(event.calendarColor),

@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <h1 class="text-4xl font-bold text-[#31776c] mb-8">Calendar</h1>
+  <div class="pt-24 px-6 md:px-24">
 
-    <div class="calendar rounded-lg m-auto w-full bg-[#fff] shadow-lg">
+    <div class="calendar rounded-lg w-full bg-[#fff] shadow-lg">
 
       <CalendarHeader
           :formatted-week="formattedWeek"
@@ -10,7 +9,7 @@
           :today-i-s-o="currentDate"
           @prev-week="prevWeek"
           @next-week="nextWeek"
-       />
+      />
 
       <CalendarMultiDayRow
           :week-days="weekDays"
@@ -130,7 +129,10 @@ const weekDays = computed(() => {
 
     return {
       date: format(date, "yyyy-MM-dd"),
-      label: format(date, "dd EEEE")
+      label: format(date, "dd EEEE"),
+      dayNumber: format(date, "dd"),
+      dayName: format(date, "EEEE"),
+      dayInitial: format(date, "EEEEEE")
     };
   });
 });

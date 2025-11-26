@@ -2,7 +2,7 @@
   <div class="calendar-container-head flex">
     <div class="w-[65px] bg-[#fff]"></div>
 
-    <div class="calendar-week-day-grid grid grid-cols-7 flex-1">
+    <div class="calendar-week-day-grid grid grid-cols-7 flex-1 overflow-hidden">
       <template
           v-for="day in weekDays"
           :key="day.date"

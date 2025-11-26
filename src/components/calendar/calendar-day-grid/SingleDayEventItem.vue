@@ -7,8 +7,8 @@
       colorStore.getBackgroundLightColor(event.calendarColor)
     ]"
   >
-    <h2 class="font-semibold truncate whitespace-nowrap">{{ event.summary }}</h2>
-    <p class="text-gray-500">{{ event.formattedDuration }}</p>
+    <h2 class="font-semibold sm:truncate">{{ event.summary }}</h2>
+    <p class="text-gray-500 hidden sm:block">{{ event.formattedDuration }}</p>
   </div>
 </template>
 
