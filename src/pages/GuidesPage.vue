@@ -1,7 +1,9 @@
 <template>
-  <PageWrapper>
+  <PageLayout
+      title="Guides"
+      subtitle="Watch and learn how to import your calendars.">
     <Guides/>
-  </PageWrapper>
+  </PageLayout>
 </template>
 
 <style>
@@ -10,5 +12,5 @@
 
 <script setup>
 import Guides from "@/components/guides/Guides.vue";
-import PageWrapper from "@/components/layout/PageWrapper.vue";
+import PageLayout from "@/components/layout/PageLayout.vue";
 </script>
