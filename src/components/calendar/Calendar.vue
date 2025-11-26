@@ -5,6 +5,7 @@
 
       <CalendarHeader
           :formatted-week="formattedWeek"
+          :formatted-short-week="formattedShortWeek"
           :week-days="weekDays"
           :today-i-s-o="currentDate"
           @prev-week="prevWeek"
@@ -78,6 +79,13 @@ onMounted(() => {
 const formattedWeek = computed(() => {
   const start = format(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), "dd MMMM");
   const end = format(addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), 6), "dd MMMM");
+  const year = format(weekSwitch.value, "yyyy");
+  return `${start} - ${end}, ${year}`;
+});
+
+const formattedShortWeek = computed(() => {
+  const start = format(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), "dd MMM");
+  const end = format(addDays(startOfWeek(weekSwitch.value, {weekStartsOn: 1}), 6), "dd MMM");
   const year = format(weekSwitch.value, "yyyy");
   return `${start} - ${end}, ${year}`;
 });

@@ -6,7 +6,8 @@
     >
       ‹
     </button>
-    <h2>{{ formattedWeek }}</h2>
+    <h2 class="hidden sm:block">{{ formattedWeek }}</h2>
+    <h2 class="sm:hidden">{{ formattedShortWeek }}</h2>
     <button
         class="px-3.5 py-1 rounded-md bg-gray-100 hover:bg-gray-300 duration-200"
         @click="$emit('next-week')"
@@ -19,6 +20,10 @@
 <script setup>
 defineProps({
   formattedWeek: {
+    type: String,
+    required: true
+  },
+  formattedShortWeek: {
     type: String,
     required: true
   }

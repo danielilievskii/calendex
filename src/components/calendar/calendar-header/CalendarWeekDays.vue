@@ -16,13 +16,13 @@
             'font-semibold m-1 md:m-2 rounded-md shadow-sm text-center p-1 md:p-1.5'
           ]"
         >
-          <div class="md:hidden flex flex-col">
+          <div class="sm:hidden flex flex-col">
             <span class="font-bold">{{ day.dayNumber }}</span>
             <hr>
             <span>{{ day.dayInitial.charAt(0)}}</span>
           </div>
 
-          <span class="hidden md:inline">{{ day.label }}</span>
+          <span class="hidden sm:block">{{ day.label }}</span>
         </h3>
       </div>
     </div>
