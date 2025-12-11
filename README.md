@@ -50,6 +50,6 @@ npm run dev
 <img width="1912" height="907" alt="calendex2" src="https://github.com/user-attachments/assets/920530b2-1287-4c07-a526-7a2e021bcdf6" />
 <img width="1900" height="906" alt="calendex3" src="https://github.com/user-attachments/assets/cb46af80-5197-44c9-9b38-49e9d7ad5f0a" />
 <img width="1915" height="908" alt="calendex4" src="https://github.com/user-attachments/assets/21ecb2da-3cc4-4bb0-a749-a1c89bf77d74" />
-<img width="1903" height="911" alt="calendex5" src="https://github.com/user-attachments/assets/7eb24eb7-90e8-4c7e-b3e5-12d3b9b695b7" />
-<img width="1918" height="909" alt="calendex6" src="https://github.com/user-attachments/assets/4d43f2c4-7a4b-4ca4-8761-b0068451533f" />
+<img width="1905" height="910" alt="calendex7" src="https://github.com/user-attachments/assets/32aa7b90-016e-4356-9df5-55eb33087d0b" />
+<img width="1916" height="908" alt="calendex6" src="https://github.com/user-attachments/assets/dca69c6f-5bb4-4528-8fbd-f9726ae4f98b" />
 
